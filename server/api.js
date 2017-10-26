@@ -132,7 +132,7 @@ module.exports = function Routes(app){
                 return {
                     name: randomDestination.name || "Unnamed", 
                     loc: randomDestination["location"].display_address.join(", ") || "Varies",
-                    image_url: randomDestination.image_url || "./public/src/assets/question-mark.jpg",
+                    image_url: randomDestination.image_url || "./assets/question-mark.jpg",
                     url: randomDestination.url || "N/A",
                     phone: randomDestination.display_phone || "N/A",
                     rating: Math.round(randomDestination.rating) || 0,
