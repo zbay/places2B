@@ -1,0 +1,49 @@
+.destImg{
+    min-height:60%;
+    min-width:40%;
+    max-height:300px;
+    max-width:95%;
+    margin-bottom:15px;
+    border: 5px groove white;
+    border-radius: 3px;
+    margin-left:auto;
+    margin-right:auto;
+}
+#resultsList{
+    padding:0;
+    margin-left:10%;
+    margin-right:10%;
+}
+#disclaimer{
+margin-top:30px;
+}
+li{
+    border: 10px solid #D80032;;
+    border-radius: 10px;
+    margin: 7px;
+    /* lightgray from 0 to 10px, white from 10 to 20px */
+background: repeating-linear-gradient(
+  45deg,
+  lightgray,
+  lightgray 10px,
+  white 10px,
+  white 20px
+);
+}
+.inside-li{
+    color:black;
+}
+.left-column{
+    margin-top:2%;
+    margin-bottom:5%;
+    margin-left:3%;
+    margin-right:3%;
+    height:100%;
+    border: 3px solid black;
+    background-color:white;
+    padding-bottom: 5px;
+}
+.title{
+font-size:27px;
+text-decoration:underline;
+}

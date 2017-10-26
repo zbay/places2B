@@ -1,0 +1,27 @@
+.nested {
+    font-weight: normal;
+    margin-left: 3px;
+  }
+  #destinationList{
+      list-style-type:none;
+      padding:0;
+  }
+  .destRow{
+      margin-top:10px;
+      margin-bottom:10px;
+  }
+  .help{
+      color:#D80032;
+      font-size:30px;
+      font-weight:bold;
+      font-family:Arial;
+      font-weight:bold;
+      padding:10px;
+      margin-bottom:5px;
+  }
+  .container{
+      font-family: Arial;
+  }
+  button{
+      border-radius:5px;
+  }
