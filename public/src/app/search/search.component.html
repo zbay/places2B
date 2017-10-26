@@ -39,7 +39,7 @@
   <div class="form-group">
       <label>Search Radius (miles)</label>
       <br />
-      <input type="number" name="radius" [(ngModel)]="searchQuery.radius" #radius="ngModel" required />
+      <input type="number" name="radius" step="1" [(ngModel)]="searchQuery.radius" #radius="ngModel" required />
   </div>
   <div class="help" *ngIf="city.errors">Please enter a city of 2 or more characters!</div>
   <div class="help" *ngIf="radius.errors || searchQuery.radius < 0 || searchQuery.radius > 25">Please enter a radius between 0 and 25!</div>

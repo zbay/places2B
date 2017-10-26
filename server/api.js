@@ -119,7 +119,7 @@ module.exports = function Routes(app){
                 return {
                     name: "No result! Try again?",
                     loc: "N/A",
-                    image_url: "./public/src/assets/question-mark.jpg",
+                    image_url: "./assets/question-mark.jpg",
                     url: "",
                     phone: "",
                     rating: 0,
