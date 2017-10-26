@@ -10,6 +10,12 @@ body {
   input, button{
     color:black;
   }
+  button{
+    background-color: lightgray;
+  }
+  input{
+    background-color:orange;
+  }
   .jumbotron{
     background-color:white;
     border: 20px double #D80032;
