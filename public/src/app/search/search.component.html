@@ -28,8 +28,8 @@
               </div>
             </li>
           </ol>
-      <button *ngIf="10 >= searchQuery.destinations.length" (click)="addDestination()">Add Destination</button>
-      <button *ngIf="searchQuery.destinations.length >= 2" (click)="removeDestination()">Remove Destination</button>
+      <button *ngIf="10 >= searchQuery.destinations.length" (click)="addDestination()" class="destButton">Add Destination</button>
+      <button *ngIf="searchQuery.destinations.length >= 2" (click)="removeDestination()" class="destButton">Remove Destination</button>
   </div>
   <div class="form-group">
       <label>City</label>
