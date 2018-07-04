@@ -1,19 +1,18 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 
 @Injectable()
 export class PlaceService {
 
-  constructor(private _http: Http) { }
-  
+  constructor(private _http: HttpClient) { }
+
   search(query, successCallback, failCallback){
     return this._http.post('/api/search', query)
-    .map(response => response.json())
     .toPromise()
     .then((data) => {
-      successCallback(data.results);
+      successCallback(data);
     })
     .catch((err) => {
       failCallback(JSON.parse(err._body).error);
@@ -22,7 +21,6 @@ export class PlaceService {
 
   swap(query, successCallback, failCallback){
     return this._http.post('/api/swap', query)
-    .map(response => response.json())
     .toPromise()
     .then((data) => {
       successCallback(data);
