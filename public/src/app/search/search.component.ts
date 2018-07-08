@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { PlaceService } from '../place.service';
 
 @Component({
   selector: 'app-search',
@@ -7,15 +8,19 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 })
 export class SearchComponent implements OnInit {
   searchQuery = {destinations: [{kind: 'restaurants'}], city: 'McLean, VA', radius: 25, queryTypes: []};
-  @Output() formDataEmitter = new EventEmitter();
-  @Input() errorMessage;
+  errorMessage: string = null;
 
-  constructor() { }
+  constructor(private _placeService: PlaceService) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this._placeService.latestSearchError.subscribe(err => {
+      this.errorMessage = err;
+    });
+  }
 
   triggerSearch(){
-    this.formDataEmitter.emit(this.searchQuery);
+    this._placeService.search(this.searchQuery);
+    // this.formDataEmitter.emit(this.searchQuery);
   }
 
   addDestination(){

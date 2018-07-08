@@ -1,6 +1,6 @@
 <a [routerLink]="['/about']">What is this?</a>
 <h3>What do you want to do?</h3>
 <hr />
-<app-search (formDataEmitter)="this.search($event)" [errorMessage]="this.errorMessage"></app-search>
+<app-search></app-search>
 <hr />
-<app-results *ngIf="this.searchResults.length" [searchResults]="this.searchResults" (swapEmitter)="swapOut($event)"></app-results>
+<app-results></app-results>

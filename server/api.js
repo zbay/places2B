@@ -83,20 +83,24 @@ module.exports = function Routes(app){
             image_url: "./assets/question-mark.jpg",
             url: "",
             phone: "",
-            rating: 0,
+            rating: [],
             reviews: "Reviews: 0",
             category: category
         };
       }  else{
           const randomDest = results[Math.floor(Math.random() * results.length)];
           console.log(randomDest);
+          let stars = [];
+          for(let i = 0; i < Math.round(randomDest.rating); i++){
+            stars.push('*');
+          }
           return {
               name: randomDest.name || "Unnamed",
               loc: randomDest["location"].display_address.join(", ") || "Varies",
               image_url: randomDest.image_url || "./assets/question-mark.jpg",
               url: randomDest.url || "N/A",
               phone: randomDest.display_phone || "N/A",
-              rating: Math.round(randomDest.rating) || 0,
+              rating: stars,
               reviews: "Yelp reviews: " + (randomDest.review_count ? randomDest.review_count : "0"),
               category: category
           };
@@ -113,7 +117,7 @@ module.exports = function Routes(app){
             image_url: "./assets/question-mark.jpg",
             url: "",
             phone: "",
-            rating: 0,
+            rating: [],
             reviews: "Reviews: 0",
             category: category
         };
@@ -121,13 +125,17 @@ module.exports = function Routes(app){
       else{
         const randomIndex = Math.round(Math.random() * keys.length);
         const randomDest = destinationsOfType[keys[randomIndex]];
+        let stars = [];
+        for(let i = 0; i < Math.round(randomDest.rating); i++){
+          stars.push('*');
+        }
         const returnDest = Object.assign({}, {
             loc: randomDest["location"].display_address.join(", ") || "Varies",
             name: randomDest.name || "Unnamed",
             image_url: randomDest.image_url || "./assets/question-mark.jpg",
             url: randomDest.url || "N/A",
             phone: randomDest.display_phone || "N/A",
-            rating: Math.round(randomDest.rating) || 0,
+            rating: stars,
             reviews: "Yelp reviews: " + (randomDest.review_count ? randomDest.review_count : "0"),
             category: category
         });

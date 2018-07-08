@@ -1,29 +1,31 @@
-<h3>Here's a plan!</h3>
-<ol id="resultsList">
-    <li *ngFor="let destination of searchResults; let idx = index" class="container">
-        <div class="row inside-li">
-            <div class="col-lg-1"></div>
-            <div class="col-lg-5 left-column">
-                <a href="{{destination.url}}" class="title">{{destination.name || "No result! Try again?"}}</a>
-                <br />
-                {{destination.loc || "N/A"}}
-                <br />
-                {{destination.phone}}
-                <br />
-                <span *ngFor="let star of destination.starArray">&#9733;</span> <!-- need to populate destination with array of ints up to the destination ceiling -->
-                <br />
-                {{destination.reviews}}
-                <br /><br />
-                <button (click)="triggerSwap(destination.category, idx)">Somewhere else?</button>
-            </div>
-            <div class="col-lg-1"></div>
-            <div class="col-lg-4 right-column">
-                <img class="destImg" src="{{destination.image_url}}"/>
-            </div>
-            <div class="col-lg-1"></div>
-        </div>
-    </li>
-</ol>
-<div id="disclaimer">
-    <p>Make sure to check the hours or schedule before visiting any of these fine places!</p>
+<div *ngIf="searchResults.length">
+  <h3>Here's a plan!</h3>
+  <ol id="resultsList">
+      <li *ngFor="let destination of searchResults; let idx = index" class="container">
+          <div class="row inside-li">
+              <div class="col-lg-1"></div>
+              <div class="col-lg-5 left-column">
+                  <a href="{{destination.url}}" class="title">{{destination.name || "No result! Try again?"}}</a>
+                  <br />
+                  {{destination.loc || "N/A"}}
+                  <br />
+                  {{destination.phone}}
+                  <br />
+                  <span *ngFor="let star of destination.rating">&#9733;</span>
+                  <br />
+                  {{destination.reviews}}
+                  <br /><br />
+                  <button (click)="triggerSwap(destination.category, idx)">Somewhere else?</button>
+              </div>
+              <div class="col-lg-1"></div>
+              <div class="col-lg-4 right-column">
+                  <img class="destImg" src="{{destination.image_url}}"/>
+              </div>
+              <div class="col-lg-1"></div>
+          </div>
+      </li>
+  </ol>
+  <div id="disclaimer">
+      <p>Make sure to check the hours or schedule before visiting any of these fine places!</p>
+  </div>
 </div>

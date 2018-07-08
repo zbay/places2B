@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { PlaceService } from '../place.service';
 
 @Component({
   selector: 'app-results',
@@ -6,16 +7,18 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./results.component.css']
 })
 export class ResultsComponent implements OnInit {
-  @Input() searchResults;
-  @Output() swapEmitter = new EventEmitter();
+  searchResults: any[] = [];
 
-  constructor() { }
+  constructor(private _placeService: PlaceService) { }
 
   ngOnInit() {
+    this._placeService.latestSearchResults.subscribe(results => {
+      this.searchResults = results;
+    });
   }
 
-  triggerSwap(category, index){
-    this.swapEmitter.emit({category: category, index: index});
+  triggerSwap(category: string, index: number){
+    this._placeService.swap(category, index);
   }
 
 }

@@ -44,5 +44,5 @@
   <div class="help" *ngIf="city.errors">Please enter a city of 2 or more characters!</div>
   <div class="help" *ngIf="radius.errors || searchQuery.radius < 0 || searchQuery.radius > 25">Please enter a radius between 0 and 25!</div>
   <div class="help" *ngIf="errorMessage">No data was retrieved from Yelp. Please try again.</div>
-  <button (click)="triggerSearch($event)" *ngIf="form.valid && searchQuery.radius >= 0 && searchQuery.radius <= 25">Find Places To Go</button>
+  <button (click)="triggerSearch()" *ngIf="form.valid && searchQuery.radius >= 0 && searchQuery.radius <= 25">Find Places To Go</button>
 </form>
