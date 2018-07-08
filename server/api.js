@@ -6,142 +6,141 @@ const path = require('path');
 require('dotenv').config(); // access process.env variables
 
 const clientId = process.env.YELP_CLIENT_ID;
-const clientSecret = process.env.YELP_CLIENT_SECRET;
+const apiKey = process.env.YELP_API_KEY;
 
-const app = express();
+//const app = express();
+const client = yelp.client(apiKey);
 
 module.exports = function Routes(app){
 
     app.post("/api/search", function process(req, res){ // process search requests
         const requestData = req.body;
-        
-        let promise = new Promise((fulfill, reject) => { // begin promise 1
-            let searchRequests = [];
-        
-            for(let i = 0; i < requestData.queryTypes.length; i++){ // create a search request for each necessary category
-                searchRequests[i] = {
-                location: requestData.city,
-                radius: fixRadius(requestData.radius), 
-                categories: requestData.queryTypes[i]
+        const destinations = requestData.destinations;
+
+        const allDestinations = {};
+        let randomDestinations = [];
+        let count = 0;
+
+        // doesn't repeat, if multiple queries of same type
+        const searchRequests = requestData.queryTypes.map((queryCategory) => {
+          allDestinations[queryCategory] = {};
+            return setTimeout(() => client.search({
+              location: requestData.city,
+              radius: fixRadius(requestData.radius),
+              categories: queryCategory
+            }).then(response => {
+              response.jsonBody.businesses.forEach(business => {
+                if(!allDestinations[(business.id)]){
+                  if(!allDestinations[queryCategory][business.id]){
+                    allDestinations[queryCategory][business.id] = business;
+                  }
+                  allDestinations[queryCategory][business.id] = business;
                 }
-                if(searchRequests.length === requestData.queryTypes.length){ // verify that all searchRequests have been generated before sending them along
-                    fulfill(searchRequests);
+              });
+              for(let i = 0; i < destinations.length; i++){
+                if(destinations[i].kind === queryCategory){
+                  randomDestinations[i] = randomDestination(allDestinations, queryCategory);
+                  count++;
                 }
-            }
-            }).then((searchRequests) => { // end promise 1, begin promise 2
-                yelp.accessToken(clientId, clientSecret).then(response => { // get a yelp token
-                    const client = yelp.client(response.jsonBody.access_token); // establish a client using the token
-                    let randomDestinations = []; // array of destination objects
-                    let destNames = []; // array of destination names only, to easily prevent redundancy
-                    let count = 0;
-            
-                    for(let i = 0; i < searchRequests.length; i++){ // for each destination type...
-                        client.search(searchRequests[i]).then(response => { // ...search for that destination type
-                            let results = response.jsonBody.businesses;
-                            deleteRedundant(destNames, results); // delete redundant destinations from other categories
-                            
-                            for(let j = 0; j < requestData.destinations.length; j++){ // for each requested destination...
-                                if(searchRequests[i].categories === requestData.destinations[j].kind){ //...if the destination's type matches that of the outer loop...
-                                    let randomResult = randomDestination(results, searchRequests[i].categories); //...pick random destination
-                                    deleteResult(randomResult.name, results); // delete the chosen destination from further consideration (avoid redundancy)
-                                    randomDestinations[j] = randomResult; 
-                                    destNames.push(randomResult.name);
-                                    count++;
-                                    if(count === requestData.destinations.length){ // if the random array has been fully populated, return results
-                                        res.json({results: randomDestinations}); // send the results to the client  
-                                        return;
-                                    }
-                                }
-                            }
-                        }).then(() => { /* end Yelp search promise */ 
-                            return;
-                        })
-                        .catch((err) => {
-                            console.log(err);
-                            res.status(500).json({error: "The Yelp API messed up. Try again later!"});
-                        });
-                    }
-                }).then(() => { /*end Yelp promise*/
-                    return;
-                })
-                .catch((err) => {
-                    console.log(err);
-                    res.status(500).json({error: "The Yelp API messed up. Try again later!"});
-                });;
-            }).then(randomDestinations => { /* end promise 2, begin promise 3 */ 
-                console.log("Finished!");
+              }
+              if(count >= destinations.length){
+                res.json({results: randomDestinations});
+              }
             })
-            .catch((error) => { // process any errors
-                console.error(error);
-                res.status(500).json({error: "The Yelp API messed up. Try again later!"});
-            });
+            .catch((err) => {
+              console.log(err);
+              res.sendStatus(500).json({error: "The Yelp API messed up. Try again later!"});
+            }), 500);
+        });
     });
-    
+
     app.post("/api/swap", function(req, res){
         const requestData = req.body;
-        console.log(requestData);
-        console.log("swapping");
-        let searchRequest = {
+        client.search({
                 location: requestData.city,
-                radius: fixRadius(requestData.radius), 
+                radius: fixRadius(requestData.radius),
                 categories: requestData.category
-        };
-                yelp.accessToken(clientId, clientSecret).then(response => { // get a yelp token
-                    const client = yelp.client(response.jsonBody.access_token); // establish a client using the token
-                    
-                    client.search(searchRequest).then(response => { // ...search for that destination type
-                        let results = response.jsonBody.businesses;
-                        deleteRedundant(requestData.otherDests, results); // delete redundant destinations from other categories
-                        res.json(randomDestination(results, searchRequest.categories)); //...pick random destination, send to client
-                        return;
-                    }).then((results) => { /* end Yelp search promise */ 
-                        return;
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                        res.status(500).json({error: "The Yelp API messed up. Try again later!"});
-                    });
-                }).then((randomResult) => { /*end Yelp promise*/
-                    return;
-                }).catch((err) => {
-                    console.log(err);
-                    res.status(500).json({error: "The Yelp API messed up. Try again later!"});
-                });
-    });
+        }).then(response => {
+          let results = response.jsonBody.businesses;
+          deleteRedundant(requestData.otherDests, results); // delete redundant destinations from other categories
+          res.json(randomDestinationFromArray(results, requestData.category));
+        })
+        .catch((err) => {
+            console.log(err);
+            res.sendStatus(500).json({error: "The Yelp API messed up. Try again later!"});
+        });
+  });
 
     app.all("*", (req, res, next) => { // front-end views
         res.sendFile(path.resolve("./public/dist/index.html"))
     });
 
-    function randomDestination(results, category){
-        let count = 0;
-            if(results.length == 0){ // if no results in that category were retrieved, send back placeholder data
-                return {
-                    name: "No result! Try again?",
-                    loc: "N/A",
-                    image_url: "./assets/question-mark.jpg",
-                    url: "",
-                    phone: "",
-                    rating: 0,
-                    reviews: "Reviews: 0",
-                    category: category
-                };
-            }
-            else{
-                let randomDestination = results[Math.floor((Math.random() * results.length))];  // extract a random destination from the category
-                return {
-                    name: randomDestination.name || "Unnamed", 
-                    loc: randomDestination["location"].display_address.join(", ") || "Varies",
-                    image_url: randomDestination.image_url || "./assets/question-mark.jpg",
-                    url: randomDestination.url || "N/A",
-                    phone: randomDestination.display_phone || "N/A",
-                    rating: Math.round(randomDestination.rating) || 0,
-                    reviews: ("Yelp reviews: " + randomDestination.review_count) || "Reviews: 0",
-                    category: category
-                };
-            }
+    function randomDestinationFromArray(results, category){
+      if(results.length === 0){
+        return {
+            name: "No result! Try again?",
+            loc: "N/A",
+            image_url: "./assets/question-mark.jpg",
+            url: "",
+            phone: "",
+            rating: 0,
+            reviews: "Reviews: 0",
+            category: category
+        };
+      }  else{
+          const randomDest = results[Math.floor(Math.random() * results.length)];
+          console.log(randomDest);
+          return {
+              name: randomDest.name || "Unnamed",
+              loc: randomDest["location"].display_address.join(", ") || "Varies",
+              image_url: randomDest.image_url || "./assets/question-mark.jpg",
+              url: randomDest.url || "N/A",
+              phone: randomDest.display_phone || "N/A",
+              rating: Math.round(randomDest.rating) || 0,
+              reviews: "Yelp reviews: " + (randomDest.review_count ? randomDest.review_count : "0"),
+              category: category
+          };
+      }
     }
-    
+
+    function randomDestination(destinations, category){
+      const destinationsOfType = destinations[category];
+      const keys = destinationsOfType ? Object.keys(destinationsOfType) : [];
+      if(keys.length === 0){
+        return {
+            name: "No result! Try again?",
+            loc: "N/A",
+            image_url: "./assets/question-mark.jpg",
+            url: "",
+            phone: "",
+            rating: 0,
+            reviews: "Reviews: 0",
+            category: category
+        };
+      }
+      else{
+        const randomIndex = Math.round(Math.random() * keys.length);
+        const randomDest = destinationsOfType[keys[randomIndex]];
+        const returnDest = Object.assign({}, {
+            loc: randomDest["location"].display_address.join(", ") || "Varies",
+            name: randomDest.name || "Unnamed",
+            image_url: randomDest.image_url || "./assets/question-mark.jpg",
+            url: randomDest.url || "N/A",
+            phone: randomDest.display_phone || "N/A",
+            rating: Math.round(randomDest.rating) || 0,
+            reviews: "Yelp reviews: " + (randomDest.review_count ? randomDest.review_count : "0"),
+            category: category
+        });
+        console.log();
+        if(randomDest && randomDest.id){
+          for(let searchCategory in destinations){
+            delete destinations[searchCategory][randomDest.id]; // prevents redundancy
+          }
+        }
+        return returnDest;
+      }
+    }
+
     function deleteResult(name, results){ // helper to delete a chosen result, to prevent redundancy
         for(let i = 0; i < results.length; i++){
             if(name === results[i].name){
@@ -150,15 +149,15 @@ module.exports = function Routes(app){
             }
         }
     }
-    
+
     function deleteRedundant(alreadySelected, results){ // deletes redundant destinations previously chosen from other categories
         for(let i = 0; i < alreadySelected.length; i++){
             if(alreadySelected[i]){
-                deleteResult(alreadySelected[i], results);   
+                deleteResult(alreadySelected[i], results);
             }
         }
     }
-    
+
     function fixRadius(radius){
             radius = radius * 1609.344; // convert radius from miles to meters
             if(radius > 40000){ // yelp only accepts up to 40000 meters
@@ -169,4 +168,4 @@ module.exports = function Routes(app){
             }
             return Math.floor(radius); // yelp API only accepts integers for distance
     }
-    }
+}

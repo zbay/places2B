@@ -13,13 +13,9 @@ export class HomeComponent implements OnInit {
   searchResults = [];
   destNames = [];
 
-  constructor(private _placeService: PlaceService) { 
-    console.log("home component...");
-  }
+  constructor(private _placeService: PlaceService) { }
 
-  ngOnInit() {
-    console.log("home component");
-  }
+  ngOnInit() { }
 
   search(query){
     query.queryTypes = this.requestedDestinationTypes(query);
@@ -27,8 +23,8 @@ export class HomeComponent implements OnInit {
     this._placeService.search(query, this.showResults.bind(this), this.showError.bind(this));
   }
 
-  showResults(results){
-    console.log(results);
+  showResults(resultsObj){
+    let results = resultsObj.results;
     for(let i = 0; i < results.length; i++){
       let starArray = [];
       for(let s = 0; s < results[i].rating; s++){
@@ -52,7 +48,7 @@ export class HomeComponent implements OnInit {
         }
     }
     return kinds;
-  } 
+  }
 
   swapOut(place){
     //send out request to swap a destination for another one in the same category
@@ -74,7 +70,7 @@ export class HomeComponent implements OnInit {
               return this.destNames;
           }
       }
-  }   
+  }
   else{
     if(this.destNames.length > 33){ // if the memory list gets too long, purge it and replace with the current destinations
         this.destNames = [];
