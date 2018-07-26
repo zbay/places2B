@@ -1,5 +1,12 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { PlaceService } from '../place.service';
+import { Component,
+         EventEmitter,
+         Input,
+         OnInit,
+         Output }          from '@angular/core';
+
+import { DestinationType } from '../shared';
+import { PlaceService }    from '../place.service';
+import { SearchQuery }     from '../shared';
 
 @Component({
   selector: 'app-search',
@@ -7,8 +14,8 @@ import { PlaceService } from '../place.service';
   styleUrls: ['./search.component.css']
 })
 export class SearchComponent implements OnInit {
-  searchQuery = {destinations: [{kind: 'restaurants'}], city: 'McLean, VA', radius: 25, queryTypes: []};
   errorMessage: string = null;
+  searchQuery: SearchQuery = { destinations: [{kind: 'restaurants'}], city: 'McLean, VA', radius: 25, queryTypes: [] };
 
   constructor(private _placeService: PlaceService) { }
 
@@ -20,7 +27,6 @@ export class SearchComponent implements OnInit {
 
   triggerSearch(){
     this._placeService.search(this.searchQuery);
-    // this.formDataEmitter.emit(this.searchQuery);
   }
 
   addDestination(){

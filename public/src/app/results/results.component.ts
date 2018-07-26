@@ -1,4 +1,10 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component,
+         EventEmitter,
+         OnInit,
+         Input,
+         Output }       from '@angular/core';
+
+import { DestinationResult } from '../shared';
 import { PlaceService } from '../place.service';
 
 @Component({
@@ -7,7 +13,7 @@ import { PlaceService } from '../place.service';
   styleUrls: ['./results.component.css']
 })
 export class ResultsComponent implements OnInit {
-  searchResults: any[] = [];
+  searchResults: DestinationResult[] = [];
 
   constructor(private _placeService: PlaceService) { }
 

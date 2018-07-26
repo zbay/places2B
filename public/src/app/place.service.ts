@@ -17,17 +17,6 @@ export class PlaceService {
 
   constructor(private _http: HttpClient) { }
 
-  // search(query, successCallback, failCallback){
-  //   return this._http.post(`${environment.apiEndpoint}/api/search`, query)
-  //   .toPromise()
-  //   .then((data) => {
-  //     successCallback(data);
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //     failCallback(JSON.parse(err._body).error);
-  //   });
-  // }
   private queryWithDestinationTypes(query){
     let queryTypes = [];
     for(var i = 0; i < query.destinations.length; i++){
@@ -53,18 +42,6 @@ export class PlaceService {
         this._latestSearchError.next(JSON.parse(err._body).error);
       })
   }
-
-  // swap(query, successCallback, failCallback){
-  //   return this._http.post(`${environment.apiEndpoint}/api/swap`, query)
-  //   .toPromise()
-  //   .then((data) => {
-  //     successCallback(data);
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //     failCallback(JSON.parse(err._body).error);
-  //   });
-  // }
 
   // get swap working again
   swap(category: string, index: number): void{
