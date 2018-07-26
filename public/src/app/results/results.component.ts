@@ -2,10 +2,11 @@ import { Component,
          EventEmitter,
          OnInit,
          Input,
-         Output }       from '@angular/core';
+         Output }            from '@angular/core';
 
-import { DestinationResult } from '../shared';
-import { PlaceService } from '../place.service';
+import { DestinationResult } from '@shared/models';
+import { DestinationType }   from '@shared/enums';
+import { SearchService }     from '@app/services';
 
 @Component({
   selector: 'app-results',
@@ -15,16 +16,16 @@ import { PlaceService } from '../place.service';
 export class ResultsComponent implements OnInit {
   searchResults: DestinationResult[] = [];
 
-  constructor(private _placeService: PlaceService) { }
+  constructor(private _searchService: SearchService) { }
 
   ngOnInit() {
-    this._placeService.latestSearchResults.subscribe(results => {
+    this._searchService.latestSearchResults.subscribe(results => {
       this.searchResults = results;
     });
   }
 
-  triggerSwap(category: string, index: number){
-    this._placeService.swap(category, index);
+  triggerSwap(category: DestinationType, index: number){
+    this._searchService.swap(category, index);
   }
 
 }

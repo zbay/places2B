@@ -3,14 +3,14 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
-import { PlaceService } from './place.service';
+import { SearchService } from '@app/services';
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { AboutComponent } from './about/about.component';
-import { HomeComponent } from './home/home.component';
-import { SearchComponent } from './search/search.component';
-import { ResultsComponent } from './results/results.component';
+import { AppRoutingModule } from '@app/app-routing.module';
+import { AppComponent } from '@app/app.component';
+import { AboutComponent } from '@app/about/about.component';
+import { HomeComponent } from '@app/home/home.component';
+import { SearchComponent } from '@app/search/search.component';
+import { ResultsComponent } from '@app/results/results.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +26,7 @@ import { ResultsComponent } from './results/results.component';
     FormsModule,
     HttpClientModule
   ],
-  providers: [PlaceService],
+  providers: [SearchService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

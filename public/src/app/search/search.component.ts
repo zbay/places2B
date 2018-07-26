@@ -4,9 +4,9 @@ import { Component,
          OnInit,
          Output }          from '@angular/core';
 
-import { DestinationType } from '../shared';
-import { PlaceService }    from '../place.service';
-import { SearchQuery }     from '../shared';
+import { DestinationType } from '@shared/enums';
+import { SearchService }   from '@app/services';
+import { SearchQuery }     from '@shared/models';
 
 @Component({
   selector: 'app-search',
@@ -14,23 +14,24 @@ import { SearchQuery }     from '../shared';
   styleUrls: ['./search.component.css']
 })
 export class SearchComponent implements OnInit {
+  DestinationType = DestinationType;
   errorMessage: string = null;
-  searchQuery: SearchQuery = { destinations: [{kind: 'restaurants'}], city: 'McLean, VA', radius: 25, queryTypes: [] };
+  searchQuery: SearchQuery = { destinations: [{kind: DestinationType.Restaurants}], city: 'McLean, VA', radius: 25, queryTypes: [] };
 
-  constructor(private _placeService: PlaceService) { }
+  constructor(private _searchService: SearchService) { }
 
   ngOnInit() {
-    this._placeService.latestSearchError.subscribe(err => {
+    this._searchService.latestSearchError.subscribe(err => {
       this.errorMessage = err;
     });
   }
 
   triggerSearch(){
-    this._placeService.search(this.searchQuery);
+    this._searchService.search(this.searchQuery);
   }
 
   addDestination(){
-    this.searchQuery.destinations.push({'kind': 'restaurants'});
+    this.searchQuery.destinations.push({'kind': DestinationType.Restaurants});
   }
 
   removeDestination(){

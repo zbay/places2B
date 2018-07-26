@@ -1,23 +1,27 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { first } from 'rxjs/operators';
-import { BehaviorSubject } from 'rxjs';
+import { HttpClient }       from '@angular/common/http';
+import { Injectable }       from '@angular/core';
 
-import { environment } from '../environments/environment';
+import { BehaviorSubject }  from 'rxjs';
+import { first }            from 'rxjs/operators';
+
+import { environment }      from '@env/environment';
+import { DestinationResult,
+         SearchQuery }      from '@shared/models';
+import { DestinationType }  from '@shared/enums';
 
 @Injectable()
-export class PlaceService {
+export class SearchService {
 
   private _latestSearchError = new BehaviorSubject<string>(null)
-  private _latestSearchResults = new BehaviorSubject<any>([]);
-  private _latestQuery: any = null;
+  private _latestSearchResults = new BehaviorSubject<DestinationResult[]>([]);
+  private _latestQuery: SearchQuery = null;
   destNames = [];
   latestSearchError = this._latestSearchError.asObservable();
   latestSearchResults = this._latestSearchResults.asObservable();
 
   constructor(private _http: HttpClient) { }
 
-  private queryWithDestinationTypes(query){
+  private queryWithDestinationTypes(query: SearchQuery) {
     let queryTypes = [];
     for(var i = 0; i < query.destinations.length; i++){
         if(queryTypes.indexOf(query.destinations[i].kind) === -1){
@@ -28,7 +32,7 @@ export class PlaceService {
     return query;
   }
 
-  search(query: any): void{
+  search(query: SearchQuery): void{
     this._http.post(`${environment.apiEndpoint}/api/search`, this.queryWithDestinationTypes(query))
       .pipe(first())
       .subscribe((data: any) => {
@@ -44,14 +48,14 @@ export class PlaceService {
   }
 
   // get swap working again
-  swap(category: string, index: number): void{
-    const lastQuery = Object.assign({}, this._latestQuery);
+  swap(category: DestinationType, index: number): void {
+    const lastQuery: SearchQuery = Object.assign({}, this._latestQuery);
     lastQuery.category = category;
     lastQuery.otherDests = this.getNames(); // get the names from latest query names
     console.log(lastQuery);
     this._http.post(`${environment.apiEndpoint}/api/swap`, lastQuery)
       .pipe(first())
-      .subscribe((destination: any) => {
+      .subscribe((destination: DestinationResult) => {
         console.log(destination);
         let results = this._latestSearchResults.value;
         results[index] = destination;

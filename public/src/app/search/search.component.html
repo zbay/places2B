@@ -8,19 +8,38 @@
                   <div class="row destRow">
                       <div class="col-md-2 col-lg-2"></div>
                       <div class="col-md-2 col-lg-2">
-                          <input type="radio" name="destination{{idx}}" [checked]="destination.kind == 'restaurants'" value="restaurants" (change)="setDestination(idx, 'restaurants')" required/>
+                          <input type="radio"
+                                 name="destination{{idx}}"
+                                 [checked]="destination.kind == DestinationType.Restaurants"
+                                 value="{{DestinationType.Restaurants}}"
+                                 (change)="setDestination(idx, DestinationType.Restaurants)"
+                                 required/>
                           <label class="nested">Sit down and eat</label>
                       </div>
                       <div class="col-md-2 col-lg-2">
-                          <input type="radio" name="destination{{idx}}" [checked]="destination.kind == 'active'" value="active" (change)="setDestination(idx, 'active')" required/>
+                          <input type="radio"
+                                 name="destination{{idx}}"
+                                 [checked]="destination.kind == DestinationType.Active"
+                                 value="{{DestinationType.Active}}"
+                                 (change)="setDestination(idx, DestinationType.Active)"
+                                 required/>
                           <label class="nested">Be active</label>
                       </div>
                       <div class="col-md-2 col-lg-2">
-                          <input type="radio" name="destination{{idx}}" [checked]="destination.kind == 'arts'" value="arts" (change)="setDestination(idx, 'arts')" required/>
+                          <input type="radio" name="destination{{idx}}"
+                          [checked]="destination.kind == DestinationType.Arts"
+                          value="{{DestinationType.Arts}}"
+                          (change)="setDestination(idx, DestinationType.Arts)"
+                          required/>
                           <label class="nested">Be entertained</label>
                       </div>
                       <div class="col-md-2 col-lg-2">
-                          <input type="radio" name="destination{{idx}}" [checked]="destination.kind == 'nightlife'" value="nightlife" (change)="setDestination(idx, 'nightlife')" required/>
+                          <input type="radio"
+                                 name="destination{{idx}}"
+                                 [checked]="destination.kind == DestinationType.Nightlife"
+                                 value="{{DestinationType.Nightlife}}"
+                                 (change)="setDestination(idx, DestinationType.Nightlife)"
+                                 required/>
                           <label class="nested">Go out and drink</label>
                       </div>
                       <div class="col-md-2 col-lg-2"></div>
