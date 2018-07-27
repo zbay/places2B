@@ -21,7 +21,8 @@
               "src/favicon.png"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/p2b-theme.scss"
             ],
             "scripts": []
           },
