@@ -1,12 +1,21 @@
 @import './p2b-theme';
 
 body {
-  // font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: Lemon, 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color:$primary;
-  font-family: Lemon, serif;
+  font-size: 16px;
+  background:
+    linear-gradient(27deg, #151515 5px, transparent 5px) 0 5px,
+    linear-gradient(207deg, #151515 5px, transparent 5px) 10px 0,
+    linear-gradient(27deg, #222 5px, transparent 5px) 0 10px,
+    linear-gradient(207deg, #222 5px, transparent 5px) 10px 5px,
+    linear-gradient(90deg, #1b1b1b 10px, transparent 10px),
+    linear-gradient(#1d1d1d 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424);
+  background-color: $background;
+  background-size: 20px 20px;
 }
 input, button{
   color:black;
@@ -17,63 +26,74 @@ button{
 input[type="text"], input[type="number"]{
   background-color: $accent;
 }
-.jumbotron{
+
+.bookend {
   background-color:$bookend-background;
-  border: 20px double $bookend-border;
-  border-radius: 10px;
+  border: 1.25em double $bookend-border;
+  border-radius: 0.75em;
   color: $bookend-text;
-  font-family: Lemon;
+  font-family: Lemon, sans-serif;
   text-align:center;
-}
-.jumbotron h1, h2{
+  padding:1.8em;
   text-shadow: 3px 3px $accent;
+  width:100%;
+
+  h1, h2 {
+    text-shadow: 3px 3px $accent;
+  }
+
+  h1 {
+    font-size:3em;
+  }
+
+  h2 {
+    font-size: 1.8em;
+  }
 }
-.jumbotron h2{
-  font-size: 140%;
+
+.jumbotron {
+  margin-bottom: 1em;
 }
-body{
-  background:
-    linear-gradient(27deg, #151515 5px, transparent 5px) 0 5px,
-    linear-gradient(207deg, #151515 5px, transparent 5px) 10px 0px,
-    linear-gradient(27deg, #222 5px, transparent 5px) 0px 10px,
-    linear-gradient(207deg, #222 5px, transparent 5px) 10px 5px,
-    linear-gradient(90deg, #1b1b1b 10px, transparent 10px),
-    linear-gradient(#1d1d1d 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424);
-  background-color: $background;
-  background-size: 20px 20px;
-}
-a {
-  color: $accent;
-}
-#iconRow img{
-  height: 50px;
-  min-width: 50px;
-  max-width: 100px;
-}
+
 footer{
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   flex: 1;
-  align-self:center;
-  background-color:$bookend-background;
-  color:$background;
-  border: 20px double $bookend-border;
-  border-radius: 10px;
-  font-size:200%;
-  padding:30px;
-  text-shadow: 3px 3px $accent;
-  margin-top:40px;
-  width:100%;
+  align-self: center;
+  margin-top: 1em;
+
+  .vert-center-top{
+    align-self:flex-start;
+  }
+  .vert-center-bottom{
+    align-self:flex-end;
+  }
 }
+
+a:link {
+  color: $accent;
+}
+a:visited {
+  color: $alt-accent;
+}
+
+a:hover {
+  color: $alt-accent;
+}
+a:active {
+  color: $alt-accent;
+}
+
+#iconRow img{
+  height: 3em;
+  min-width: 3em;
+  max-width: 6em;
+}
+
 .wrapper{
   min-height:100vh;
   flex-direction:column;
   display:flex;
-}
-.VertCenterTop{
-  align-self:flex-start;
-}
-.VertCenterBottom{
-  align-self:flex-end;
 }

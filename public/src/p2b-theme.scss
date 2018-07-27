@@ -13,11 +13,12 @@ $p2b-warn: mat-palette($mat-red);
   @include angular-material-theme($p2b-theme);
 }
 
+$accent: mat-color($p2b-accent);
+$alt-accent: aqua;
 $foreground-text: white;
 $bookend-background: white;
 $bookend-border: mat-color($p2b-warn);
 $bookend-text: black;
-$accent: mat-color($p2b-accent);
 $warn: mat-color($p2b-warn);
 $primary: mat-color($p2b-primary);
 $background: #131313;

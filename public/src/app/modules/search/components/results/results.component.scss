@@ -3,25 +3,24 @@
     min-width:40%;
     max-height:300px;
     max-width:95%;
-    margin-top:5px;
-    margin-bottom:15px;
-    border: 5px groove white;
-    border-radius: 3px;
-    margin-left:auto;
-    margin-right:auto;
+    margin: 0.3em auto 1em;
+    border: 0.3em groove white;
+    border-radius: 0.2em;
 }
+
 #resultsList{
     padding:0;
-    margin-left:10%;
-    margin-right:10%;
+    margin: 0 10%;
 }
+
 #disclaimer{
-margin-top:30px;
+  margin-top:1em;
 }
+
 li{
-    border: 10px solid #D80032;;
-    border-radius: 10px;
-    margin: 7px;
+    border: 0.75em solid #D80032;
+    border-radius: 0.75em;
+    margin: 0.5em;
     /* lightgray from 0 to 10px, white from 10 to 20px */
 background: repeating-linear-gradient(
   45deg,
@@ -40,11 +39,12 @@ background: repeating-linear-gradient(
     margin-left:3%;
     margin-right:3%;
     height:100%;
-    border: 3px solid black;
+    border: 0.2em solid black;
     background-color:white;
-    padding-bottom: 5px;
+    padding-bottom: 0.3em;
 }
+
 .title{
-font-size:27px;
-text-decoration:underline;
+  font-size:2em;
+  text-decoration:underline;
 }
