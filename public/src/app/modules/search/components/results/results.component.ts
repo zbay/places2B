@@ -6,7 +6,7 @@ import { Component,
 
 import { DestinationResult } from '@shared/models';
 import { DestinationType }   from '@shared/enums';
-import { SearchService }     from '@app/services';
+import { SearchService }   from '@app/modules/search/services/search/search.service';
 
 @Component({
   selector: 'app-results',

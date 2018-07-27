@@ -1,10 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AboutComponent } from './about/about.component';
-import { HomeComponent } from './home/home.component';
 
-const routes: Routes = [{path: '', pathMatch: 'full', component: HomeComponent},
-{path: 'about', pathMatch: 'full', component: AboutComponent}
+import { AboutComponent } from '@app/about/about.component';
+
+const routes: Routes = [
+  {path: '', redirectTo: 'search', pathMatch: 'full'},
+  {path: 'about', pathMatch: 'full', component: AboutComponent},
+  {path: 'search', loadChildren: '@app/modules/search/search.module#SearchModule'}
 ];
 
 @NgModule({

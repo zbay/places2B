@@ -5,7 +5,7 @@ import { Component,
          Output }          from '@angular/core';
 
 import { DestinationType } from '@shared/enums';
-import { SearchService }   from '@app/services';
+import { SearchService }   from '@app/modules/search/services/search/search.service';
 import { SearchQuery }     from '@shared/models';
 
 @Component({
