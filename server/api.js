@@ -126,6 +126,8 @@ module.exports = function Routes(app){
         const randomIndex = Math.round(Math.random() * keys.length);
         const randomDest = destinationsOfType[keys[randomIndex]];
         let stars = [];
+        console.log(randomDest);
+        // RandomDest is undefined??
         for(let i = 0; i < Math.round(randomDest.rating); i++){
           stars.push('*');
         }

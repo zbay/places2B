@@ -6,8 +6,8 @@ import { first }            from 'rxjs/operators';
 
 import { environment }      from '@env/environment';
 import { DestinationResult,
-         SearchQuery }      from '@shared/models';
-import { DestinationType }  from '@shared/enums';
+         SearchQuery }      from '@models/types';
+import { DestinationType }  from '@models/enums';
 
 @Injectable()
 export class SearchService {
@@ -15,17 +15,16 @@ export class SearchService {
   private _latestSearchError = new BehaviorSubject<string>(null)
   private _latestSearchResults = new BehaviorSubject<DestinationResult[]>([]);
   private _latestQuery: SearchQuery = null;
-  destNames = [];
   latestSearchError = this._latestSearchError.asObservable();
   latestSearchResults = this._latestSearchResults.asObservable();
 
   constructor(private _http: HttpClient) { }
 
   private queryWithDestinationTypes(query: SearchQuery) {
-    let queryTypes = [];
-    for(var i = 0; i < query.destinations.length; i++){
-        if(queryTypes.indexOf(query.destinations[i].kind) === -1){
-            queryTypes.push(query.destinations[i].kind)
+    const queryTypes = [];
+    for (let i = 0; i < query.destinations.length; i++){
+        if (queryTypes.indexOf(query.destinations[i].kind) === -1) {
+            queryTypes.push(query.destinations[i].kind);
         }
     }
     query.queryTypes = queryTypes;
@@ -37,14 +36,14 @@ export class SearchService {
       .pipe(first())
       .subscribe((data: any) => {
         this._latestQuery = query;
-        if(data.results){
+        if (data.results){
           this._latestSearchResults.next(data.results);
         }
       },
       err => {
         console.log(err);
         this._latestSearchError.next(JSON.parse(err._body).error);
-      })
+      });
   }
 
   // get swap working again
@@ -57,7 +56,7 @@ export class SearchService {
       .pipe(first())
       .subscribe((destination: DestinationResult) => {
         console.log(destination);
-        let results = this._latestSearchResults.value;
+        const results = this._latestSearchResults.value;
         results[index] = destination;
         this._latestSearchResults.next(results);
       });

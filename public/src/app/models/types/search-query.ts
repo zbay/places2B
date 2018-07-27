@@ -1,4 +1,4 @@
-import { DestinationType } from '@shared/enums/destination-type.enum';
+import { DestinationType } from '@models/enums/destination-type.enum';
 
 export interface SearchQuery {
   city: string;

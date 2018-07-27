@@ -1,29 +1,32 @@
 import { Component,
-         EventEmitter,
-         Input,
-         OnInit,
-         Output }          from '@angular/core';
+         OnInit } from '@angular/core';
+import { takeUntil } from 'rxjs/operators';
 
-import { DestinationType } from '@shared/enums';
-import { SearchService }   from '@app/modules/search/services/search/search.service';
-import { SearchQuery }     from '@shared/models';
+import { DestinationType } from '@models/enums';
+import { SearchService } from '@app/modules/search/services/search/search.service';
+import { SearchQuery } from '@models/types';
+import { SubscribingComponent } from '@app/modules/shared/components/subscribing/subscribing.component';
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css']
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent extends SubscribingComponent implements OnInit {
   DestinationType = DestinationType;
   errorMessage: string = null;
   searchQuery: SearchQuery = { destinations: [{kind: DestinationType.Restaurants}], city: 'McLean, VA', radius: 25, queryTypes: [] };
 
-  constructor(private _searchService: SearchService) { }
+  constructor(private _searchService: SearchService) {
+    super();
+   }
 
   ngOnInit() {
-    this._searchService.latestSearchError.subscribe(err => {
-      this.errorMessage = err;
-    });
+    this._searchService.latestSearchError
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((err: string) => {
+        this.errorMessage = err;
+      });
   }
 
   triggerSearch(){

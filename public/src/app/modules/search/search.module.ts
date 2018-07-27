@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { NgModule } from '@angular/core';
+import { SharedModule } from '@app/modules/shared/shared.module';
 
 import { SearchRoutingModule } from '@app/modules/search/search-routing.module';
 import { HomeComponent } from './components/home/home.component';
 import { SearchComponent } from './components/search/search.component';
 import { ResultsComponent } from './components/results/results.component';
-import { SearchService }   from '@app/modules/search/services/search/search.service';
+import { SearchService } from '@app/modules/search/services/search/search.service';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { SearchService }   from '@app/modules/search/services/search/search.serv
   imports: [
     CommonModule,
     SearchRoutingModule,
+    SharedModule,
     FormsModule,
     HttpClientModule
   ],

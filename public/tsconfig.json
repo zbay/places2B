@@ -10,7 +10,7 @@
     "paths": {
       "@app/*": ["app/*"],
       "@env/*": ["environments/*"],
-      "@shared/*": ["app/shared/*"]
+      "@models/*": ["app/models/*"]
     },
     "target": "es5",
     "typeRoots": [

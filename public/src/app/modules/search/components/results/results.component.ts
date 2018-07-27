@@ -1,27 +1,30 @@
 import { Component,
-         EventEmitter,
-         OnInit,
-         Input,
-         Output }            from '@angular/core';
+         OnInit } from '@angular/core';
+import { takeUntil } from 'rxjs/operators';
 
-import { DestinationResult } from '@shared/models';
-import { DestinationType }   from '@shared/enums';
-import { SearchService }   from '@app/modules/search/services/search/search.service';
+import { DestinationResult } from '@models/types';
+import { DestinationType } from '@models/enums';
+import { SearchService } from '@app/modules/search/services/search/search.service';
+import { SubscribingComponent } from '@app/modules/shared/components/subscribing/subscribing.component';
 
 @Component({
   selector: 'app-results',
   templateUrl: './results.component.html',
   styleUrls: ['./results.component.css']
 })
-export class ResultsComponent implements OnInit {
+export class ResultsComponent extends SubscribingComponent implements OnInit {
   searchResults: DestinationResult[] = [];
 
-  constructor(private _searchService: SearchService) { }
+  constructor(private _searchService: SearchService) {
+    super();
+  }
 
   ngOnInit() {
-    this._searchService.latestSearchResults.subscribe(results => {
-      this.searchResults = results;
-    });
+    this._searchService.latestSearchResults
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(results => {
+        this.searchResults = results;
+      });
   }
 
   triggerSwap(category: DestinationType, index: number){
