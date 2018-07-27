@@ -10,7 +10,7 @@ import { SubscribingComponent } from '@app/modules/shared/components/subscribing
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
-  styleUrls: ['./search.component.css']
+  styleUrls: ['./search.component.scss']
 })
 export class SearchComponent extends SubscribingComponent implements OnInit {
   DestinationType = DestinationType;

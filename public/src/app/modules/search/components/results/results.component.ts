@@ -10,7 +10,7 @@ import { SubscribingComponent } from '@app/modules/shared/components/subscribing
 @Component({
   selector: 'app-results',
   templateUrl: './results.component.html',
-  styleUrls: ['./results.component.css']
+  styleUrls: ['./results.component.scss']
 })
 export class ResultsComponent extends SubscribingComponent implements OnInit {
   searchResults: DestinationResult[] = [];

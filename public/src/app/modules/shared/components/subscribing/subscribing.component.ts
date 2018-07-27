@@ -11,13 +11,10 @@ import { Subject }   from 'rxjs';
 export class SubscribingComponent implements OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
 
-  constructor() {
-    console.log('subsriber initializing');
-  }
+  constructor() {}
 
   ngOnDestroy() {
     this.destroy$.next(true);
-    console.log('unsubscribed!');
     this.destroy$.unsubscribe();
   }
 
