@@ -2,11 +2,13 @@ import { DestinationType } from '@models/enums/destination-type.enum';
 
 export interface SearchQuery {
   city: string;
-  destinations: [{ kind: DestinationType }];
-  queryTypes: DestinationType[];
+  destinations: { kind: string }[];
   radius: number;
 
-  // optional properties for swapping
+  // Derived from destinations. Not part of the user-originating query
+  queryTypes?: DestinationType[];
+
+  // properties only used for swapping
   category?: DestinationType;
   otherDests?: string[];
 }

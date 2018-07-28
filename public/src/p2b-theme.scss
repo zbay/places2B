@@ -2,9 +2,9 @@
 
 @include mat-core();
 
-$p2b-primary: mat-palette($mat-grey, 100, 50, 400);
+$p2b-primary: mat-palette($mat-grey, 50, 300, 600);
 $p2b-accent: mat-palette($mat-orange);
-$p2b-warn: mat-palette($mat-red);
+$p2b-warn: mat-palette($mat-yellow);
 
 .p2b-theme {
 
@@ -17,7 +17,7 @@ $accent: mat-color($p2b-accent);
 $alt-accent: aqua;
 $foreground-text: white;
 $bookend-background: white;
-$bookend-border: mat-color($p2b-warn);
+$bookend-border: red;
 $bookend-text: black;
 $warn: mat-color($p2b-warn);
 $primary: mat-color($p2b-primary);

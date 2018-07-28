@@ -1,67 +1,48 @@
-<form #form="ngForm" (submit)="nothing()">
-  <div class="form-group">
-      <ol id="destinationList">
-          <li *ngFor="let destination of searchQuery.destinations; let idx = index">
-              <label>Destination {{idx+1}}</label>
-              <br />
-              <div class="container">
-                  <div class="row destRow">
-                      <div class="col-md-2 col-lg-2"></div>
-                      <div class="col-md-2 col-lg-2">
-                          <input type="radio"
-                                 name="destination{{idx}}"
-                                 [checked]="destination.kind == DestinationType.Restaurants"
-                                 value="{{DestinationType.Restaurants}}"
-                                 (change)="setDestination(idx, DestinationType.Restaurants)"
-                                 required/>
-                          <label class="nested">Sit down and eat</label>
-                      </div>
-                      <div class="col-md-2 col-lg-2">
-                          <input type="radio"
-                                 name="destination{{idx}}"
-                                 [checked]="destination.kind == DestinationType.Active"
-                                 value="{{DestinationType.Active}}"
-                                 (change)="setDestination(idx, DestinationType.Active)"
-                                 required/>
-                          <label class="nested">Be active</label>
-                      </div>
-                      <div class="col-md-2 col-lg-2">
-                          <input type="radio" name="destination{{idx}}"
-                          [checked]="destination.kind == DestinationType.Arts"
-                          value="{{DestinationType.Arts}}"
-                          (change)="setDestination(idx, DestinationType.Arts)"
-                          required/>
-                          <label class="nested">Be entertained</label>
-                      </div>
-                      <div class="col-md-2 col-lg-2">
-                          <input type="radio"
-                                 name="destination{{idx}}"
-                                 [checked]="destination.kind == DestinationType.Nightlife"
-                                 value="{{DestinationType.Nightlife}}"
-                                 (change)="setDestination(idx, DestinationType.Nightlife)"
-                                 required/>
-                          <label class="nested">Go out and drink</label>
-                      </div>
-                      <div class="col-md-2 col-lg-2"></div>
-                  </div>
-              </div>
-            </li>
-          </ol>
-      <button *ngIf="10 >= searchQuery.destinations.length" (click)="addDestination()" class="destButton">Add Destination</button>
-      <button *ngIf="searchQuery.destinations.length >= 2" (click)="removeDestination()" class="destButton">Remove Destination</button>
+<mat-card [formGroup]="searchForm" class="p2b-white-border">
+  <h3>What do you want to do?</h3>
+  <mat-form-field>
+    <input matInput
+           placeholder="City"
+           formControlName="city"/>
+    <mat-error>City is required</mat-error>
+  </mat-form-field>
+  <br />
+  <mat-form-field>
+    <input matInput
+           placeholder="Radius (miles)"
+           formControlName="radius" type="number" step="1"/>
+    <mat-error>Radius must be 1-25 miles</mat-error>
+  </mat-form-field>
+  <br />
+  <div formArrayName="destinations">
+    <mat-form-field *ngFor="let destination of destinations.controls; let i = index">
+      <mat-select [formControlName]="i"
+                  value="destination"
+                  placeholder="Destination {{i + 1}}">
+        <mat-option *ngFor="let destinationType of destinationTypes"
+                    class="p2b-solid-background"
+                    [value]="destinationType.key">
+          {{destinationType.description}}
+        </mat-option>
+      </mat-select>
+      <mat-error>Blank destinations are not allowed!</mat-error>
+    </mat-form-field>
+    <br />
+    <button class="p2b-form-button"
+            *ngIf="destinations.controls.length < 10"
+            (click)="addDestination()">
+      Add destination
+    </button>
+    <button class="p2b-form-button"
+            *ngIf="destinations.controls.length > 1"
+            (click)="removeDestination()">
+      Remove destination
+    </button>
+    <br />
+    <button class="p2b-form-button submit"
+            *ngIf="searchForm.valid"
+            (click)="triggerSearch()">
+         Let's make a plan
+    </button>
   </div>
-  <div class="form-group">
-      <label>City</label>
-      <br />
-      <input type="text" name="city" [(ngModel)]="searchQuery.city" #city="ngModel" required minlength="2"/>
-  </div>
-  <div class="form-group">
-      <label>Search Radius (miles)</label>
-      <br />
-      <input type="number" name="radius" step="1" [(ngModel)]="searchQuery.radius" #radius="ngModel" required />
-  </div>
-  <div class="help" *ngIf="city.errors">Please enter a city of 2 or more characters!</div>
-  <div class="help" *ngIf="radius.errors || searchQuery.radius < 0 || searchQuery.radius > 25">Please enter a radius between 0 and 25!</div>
-  <div class="help" *ngIf="errorMessage">No data was retrieved from Yelp. Please try again.</div>
-  <button (click)="triggerSearch()" *ngIf="form.valid && searchQuery.radius >= 0 && searchQuery.radius <= 25">Find Places To Go</button>
-</form>
+</mat-card>

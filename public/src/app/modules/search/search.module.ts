@@ -1,5 +1,3 @@
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { SharedModule } from '@app/modules/shared/shared.module';
@@ -17,10 +15,8 @@ import { SearchService } from '@app/modules/search/services/search/search.servic
     ResultsComponent
   ],
   imports: [
-    CommonModule,
     SearchRoutingModule,
     SharedModule,
-    FormsModule,
     HttpClientModule
   ],
   providers: [SearchService]

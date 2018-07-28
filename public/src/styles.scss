@@ -1,5 +1,7 @@
 @import './p2b-theme';
 
+// icons? music_video, local_dining, local_bar, local_cafe, local_movies, fastfood, terrain, directions_bike
+
 body {
   font-family: Lemon, 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -18,13 +20,10 @@ body {
   background-size: 20px 20px;
 }
 input, button{
-  color:black;
+  font-family: 'Avenir', Arial, sans-serif;
 }
 button{
   background-color: $primary;
-}
-input[type="text"], input[type="number"]{
-  background-color: $accent;
 }
 
 .bookend {
@@ -76,24 +75,46 @@ a:link {
   color: $accent;
 }
 a:visited {
-  color: $alt-accent;
+  color: $accent;
 }
 
 a:hover {
-  color: $alt-accent;
+  color: $accent;
 }
 a:active {
-  color: $alt-accent;
+  color: $accent;
 }
 
-#iconRow img{
+#iconRow img {
   height: 3em;
   min-width: 3em;
   max-width: 6em;
 }
 
-.wrapper{
+.wrapper {
   min-height:100vh;
   flex-direction:column;
   display:flex;
+}
+
+.mat-form-field-label-wrapper {
+  font-family: Lemon, sans-serif;
+}
+
+.ng-valid .mat-form-field-label {
+  color: $alt-accent !important;
+}
+
+.p2b-solid-background {
+  background-color: $background !important;
+}
+
+mat-card {
+  background: rgba(0,0,0, 0.6) !important;
+}
+
+.p2b-form-button {
+  color: $background;
+  background-color: $bookend-background;
+  font-family: Lemon, sans-serif;
 }
