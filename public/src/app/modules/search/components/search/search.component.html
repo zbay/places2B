@@ -1,48 +1,188 @@
-<mat-card [formGroup]="searchForm" class="p2b-white-border">
-  <h3>What do you want to do?</h3>
-  <mat-form-field>
-    <input matInput
-           placeholder="City"
-           formControlName="city"/>
-    <mat-error>City is required</mat-error>
-  </mat-form-field>
-  <br />
-  <mat-form-field>
-    <input matInput
-           placeholder="Radius (miles)"
-           formControlName="radius" type="number" step="1"/>
-    <mat-error>Radius must be 1-25 miles</mat-error>
-  </mat-form-field>
-  <br />
-  <div formArrayName="destinations">
-    <mat-form-field *ngFor="let destination of destinations.controls; let i = index">
-      <mat-select [formControlName]="i"
-                  value="destination"
-                  placeholder="Destination {{i + 1}}">
-        <mat-option *ngFor="let destinationType of destinationTypes"
-                    class="p2b-solid-background"
-                    [value]="destinationType.key">
-          {{destinationType.description}}
-        </mat-option>
-      </mat-select>
-      <mat-error>Blank destinations are not allowed!</mat-error>
-    </mat-form-field>
-    <br />
-    <button class="p2b-form-button"
-            *ngIf="destinations.controls.length < 10"
-            (click)="addDestination()">
-      Add destination
-    </button>
-    <button class="p2b-form-button"
-            *ngIf="destinations.controls.length > 1"
-            (click)="removeDestination()">
-      Remove destination
-    </button>
-    <br />
-    <button class="p2b-form-button submit"
-            *ngIf="searchForm.valid"
-            (click)="triggerSearch()">
-         Let's make a plan
-    </button>
-  </div>
-</mat-card>
+<mat-expansion-panel [expanded]="isSearchOpen" class="p2b-white-border">
+  <mat-expansion-panel-header (click)="toggleSearchOpen()">
+    <mat-panel-title class="fancy-text">
+      <span *ngIf="!hasSubmitted">
+        What do you want to do?
+      </span>
+      <span *ngIf="hasSubmitted">
+        Revise your search
+      </span>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+  <mat-horizontal-stepper linear="true" #stepper fxShow fxHide.lt-sm="true">
+    <mat-step [stepControl]="locationGroup">
+      <ng-template matStepLabel>Location</ng-template>
+      <div [formGroup]="locationGroup">
+        <mat-form-field>
+          <input matInput
+                 placeholder="City"
+                 formControlName="city"/>
+          <mat-error>City is required</mat-error>
+        </mat-form-field>
+        <br />
+        <mat-form-field>
+          <input matInput
+                 placeholder="Radius (miles)"
+                 formControlName="radius" type="number" step="1"/>
+          <mat-error>Radius must be 1-25 miles</mat-error>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperNext color="accent" [disabled]="!locationGroup.valid">
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="destinationsGroup">
+      <ng-template matStepLabel>Activities</ng-template>
+      <div [formGroup]="destinationsGroup">
+        <div formArrayName="destinations" >
+          <div fxLayout="row wrap" fxLayoutAlign="space-around center">
+            <mat-form-field *ngFor="let destination of destinations.controls; let i = index">
+              <mat-select [formControlName]="i"
+                          class="inline-select"
+                          value="destination"
+                          placeholder="Destination {{i + 1}}">
+                <mat-option *ngFor="let destinationType of destinationTypes"
+                            class="p2b-solid-background"
+                            [value]="destinationType.key">
+                  {{destinationType.description}}
+                </mat-option>
+              </mat-select>
+              <mat-error>Blank destinations are not allowed!</mat-error>
+            </mat-form-field>
+          </div>
+          <br />
+          <div fxLayout="row" fxLayoutAlign="space-around center">
+            <button mat-button color="accent"
+                    [disabled]="destinations.controls.length >= 10"
+                    (click)="addDestination()">
+              <mat-icon>add_circle</mat-icon>
+            </button>
+            <button mat-button color="accent"
+                    [disabled]="destinations.controls.length <= 1"
+                    (click)="removeDestination()">
+              <mat-icon>remove_circle</mat-icon>
+            </button>
+          </div>
+          <br />
+          <div fxLayout="row" fxLayoutAlign="space-between center">
+            <button mat-button color="accent" matStepperPrevious>
+              <mat-icon>arrow_backward</mat-icon>
+            </button>
+            <button class="p2b-form-button submit"
+                    *ngIf="locationGroup.valid && destinationsGroup.valid"
+                    (click)="triggerSearch()">
+              Submit your plan
+            </button>
+            <button mat-button color="accent" matStepperNext [disabled]="!destinationsGroup.valid">
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="optionsGroup">
+      <ng-template matStepLabel="">Extra criteria (optional)</ng-template>
+      <div>Coming soon...</div>
+      <br />
+      <button mat-button color="accent" matStepperPrevious>
+        <mat-icon>arrow_backward</mat-icon>
+      </button>
+      <br /><br />
+      <button class="p2b-form-button submit"
+              *ngIf="locationGroup.valid && destinationsGroup.valid"
+              (click)="triggerSearch()">
+        Submit your plan
+      </button>
+    </mat-step>
+  </mat-horizontal-stepper>
+  <mat-vertical-stepper [linear]="true" #stepper fxHide fxShow.lt-sm="true">
+    <mat-step [stepControl]="locationGroup">
+      <ng-template matStepLabel>Location</ng-template>
+      <div [formGroup]="locationGroup">
+        <mat-form-field>
+          <input matInput
+                 placeholder="City"
+                 formControlName="city"/>
+          <mat-error>City is required</mat-error>
+        </mat-form-field>
+        <br />
+        <mat-form-field>
+          <input matInput
+                 placeholder="Radius (miles)"
+                 formControlName="radius" type="number" step="1"/>
+          <mat-error>Radius must be 1-25 miles</mat-error>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperNext color="accent">
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="destinationsGroup">
+      <ng-template matStepLabel>Activities</ng-template>
+      <div [formGroup]="destinationsGroup">
+        <div formArrayName="destinations" >
+          <div fxLayout="row wrap" fxLayoutAlign="space-around center">
+            <mat-form-field *ngFor="let destination of destinations.controls; let i = index">
+              <mat-select [formControlName]="i"
+                          class="inline-select"
+                          value="destination"
+                          placeholder="Destination {{i + 1}}">
+                <mat-option *ngFor="let destinationType of destinationTypes"
+                            class="p2b-solid-background"
+                            [value]="destinationType.key">
+                  {{destinationType.description}}
+                </mat-option>
+              </mat-select>
+              <mat-error>Blank destinations are not allowed!</mat-error>
+            </mat-form-field>
+          </div>
+          <br />
+          <div fxLayout="row" fxLayoutAlign="space-around center">
+            <button mat-button color="accent"
+                    [disabled]="destinations.controls.length >= 10"
+                    (click)="addDestination()">
+              <mat-icon>add_circle</mat-icon>
+            </button>
+            <button mat-button color="accent"
+                    [disabled]="destinations.controls.length <= 1"
+                    (click)="removeDestination()">
+              <mat-icon>remove_circle</mat-icon>
+            </button>
+          </div>
+          <br />
+          <div fxLayout="row" fxLayoutAlign="space-between center">
+            <button mat-button color="accent" matStepperPrevious>
+              <mat-icon>arrow_backward</mat-icon>
+            </button>
+            <button class="p2b-form-button submit"
+                    *ngIf="locationGroup.valid && destinationsGroup.valid"
+                    (click)="triggerSearch()">
+              Submit your plan
+            </button>
+            <button mat-button color="accent" matStepperNext>
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="optionsGroup">
+      <ng-template matStepLabel="">Extra criteria (optional)</ng-template>
+      <div>Coming soon...</div>
+      <br />
+      <button mat-button color="accent" matStepperPrevious>
+        <mat-icon>arrow_backward</mat-icon>
+      </button>
+      <br /><br />
+      <button class="p2b-form-button submit"
+              *ngIf="locationGroup.valid && destinationsGroup.valid"
+              (click)="triggerSearch()">
+        Submit your plan
+      </button>
+    </mat-step>
+  </mat-vertical-stepper>
+</mat-expansion-panel>

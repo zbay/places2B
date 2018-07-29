@@ -1,28 +1,31 @@
-import { HttpClient }       from '@angular/common/http';
-import { Injectable }       from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 
-import { BehaviorSubject }  from 'rxjs';
-import { first }            from 'rxjs/operators';
+import { BehaviorSubject,
+         Subject } from 'rxjs';
+import { first } from 'rxjs/operators';
 
-import { environment }      from '@env/environment';
+import { environment } from '@env/environment';
 import { DestinationResult,
-         SearchQuery }      from '@models/types';
-import { DestinationType }  from '@models/enums';
+         SearchQuery } from '@models/types';
+import { DestinationType } from '@models/enums';
 
 @Injectable()
 export class SearchService {
 
-  private _latestSearchError = new BehaviorSubject<string>(null)
+  private _isSearchPending = new Subject<boolean>();
+  private _latestSearchError = new BehaviorSubject<string>(null);
   private _latestSearchResults = new BehaviorSubject<DestinationResult[]>([]);
   private _latestQuery: SearchQuery = null;
+  isSearchPending = this._isSearchPending.asObservable();
   latestSearchError = this._latestSearchError.asObservable();
   latestSearchResults = this._latestSearchResults.asObservable();
 
   constructor(private _http: HttpClient) { }
 
-  private queryWithDestinationTypes(query: SearchQuery) {
+  private static queryWithDestinationTypes(query: SearchQuery) {
     const queryTypes = [];
-    for (let i = 0; i < query.destinations.length; i++){
+    for (let i = 0; i < query.destinations.length; i++) {
         if (queryTypes.indexOf(query.destinations[i].kind) === -1) {
             queryTypes.push(query.destinations[i].kind);
         }
@@ -31,19 +34,21 @@ export class SearchService {
     return query;
   }
 
-  search(query: SearchQuery): void{
-    this._http.post(`${environment.apiEndpoint}/api/search`, this.queryWithDestinationTypes(query))
+  search(query: SearchQuery): void {
+    this._isSearchPending.next(true);
+    this._http.post(`${environment.apiEndpoint}/api/search`, SearchService.queryWithDestinationTypes(query))
       .pipe(first())
       .subscribe((data: any) => {
         this._latestQuery = query;
-        if (data.results){
+        if (data.results) {
           this._latestSearchResults.next(data.results);
         }
       },
       err => {
         console.log(err);
         this._latestSearchError.next(JSON.parse(err._body).error);
-      });
+      },
+      () => this._isSearchPending.next(false));
   }
 
   // get swap working again
@@ -62,7 +67,7 @@ export class SearchService {
       });
   }
 
-  getNames(): string[]{
+  getNames(): string[] {
     return this._latestSearchResults.value.map(result => result.name);
   }
 }

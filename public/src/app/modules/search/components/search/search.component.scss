@@ -28,10 +28,10 @@
     margin: 0.3em;
   }
 
-  mat-card {
+  mat-expansion-panel {
     margin: 20px 0;
-    border-top: 2px solid white;
-    border-bottom: 2px solid white;
+    border: 2px solid white;
+    border-radius: 10px;
   }
 
   h3 {

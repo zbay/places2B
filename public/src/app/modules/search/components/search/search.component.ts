@@ -1,13 +1,18 @@
+import { AbstractControl,
+         FormArray,
+         FormBuilder,
+         FormGroup,
+         Validators } from '@angular/forms';
 import { Component,
          OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 
 import { DestinationType } from '@models/enums';
-import { SearchService } from '@app/modules/search/services/search/search.service';
-import { SearchQuery } from '@models/types';
-import { SubscribingComponent } from '@app/modules/shared/components/subscribing/subscribing.component';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DestinationTypes } from '@models/arrays/destination-types';
+import { SearchQuery } from '@models/types';
+import { SearchRadiusValidator } from '@app/modules/search/validators/search-radius/search-radius-validator';
+import { SearchService } from '@app/modules/search/services/search/search.service';
+import { SubscribingComponent } from '@app/modules/shared/components/subscribing/subscribing.component';
 
 @Component({
   selector: 'app-search',
@@ -19,16 +24,22 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
   destinationTypes = DestinationTypes;
   errorMessage: string = null;
   fb = new FormBuilder();
-  searchForm: FormGroup = this.fb.group({
+  optionsGroup: FormGroup = this.fb.group({
+    nothing: ['']
+  });
+  locationGroup: FormGroup = this.fb.group({
     city: ['Alexandria, VA', Validators.required],
-    radius: [25, Validators.required],
+    radius: [25, [Validators.required, SearchRadiusValidator]]});
+  destinationsGroup: FormGroup = this.fb.group({
     destinations: this.fb.array([
       this.fb.control(this.DestinationType.Restaurants, Validators.required)
     ])
   });
+  hasSubmitted = false;
+  isSearchOpen = true;
 
   get destinations() {
-    return this.searchForm.get('destinations') as FormArray;
+    return this.destinationsGroup.get('destinations') as FormArray;
   }
 
   addDestination() {
@@ -45,6 +56,8 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
       .subscribe((err: string) => {
         // TODO: display error
         this.errorMessage = err;
+        this.isSearchOpen = true;
+        this.hasSubmitted = false;
       });
   }
 
@@ -52,15 +65,20 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
     this.destinations.removeAt(this.destinations.length - 1);
   }
 
+  toggleSearchOpen() {
+    this.isSearchOpen = !this.isSearchOpen;
+  }
+
   triggerSearch() {
-    console.log(this.destinations.controls);
-    const searchQuery: SearchQuery = { city: '' + this.searchForm.get('city').value,
-      radius: parseInt(this.searchForm.get('radius').value, 10),
+    const searchQuery: SearchQuery = { city: '' + this.locationGroup.get('city').value,
+      radius: parseInt(this.locationGroup.get('radius').value, 10),
       destinations: this.destinations.controls
         .map((dest: AbstractControl) => ({kind: '' + dest.value}))
     };
     console.log(searchQuery);
     this._searchService.search(searchQuery);
+    this.isSearchOpen = false;
+    this.hasSubmitted = true;
   }
 
 }

@@ -26,6 +26,7 @@ button{
   background-color: $primary;
 }
 
+
 .bookend {
   background-color:$bookend-background;
   border: 1.25em double $bookend-border;
@@ -34,11 +35,12 @@ button{
   font-family: Lemon, sans-serif;
   text-align:center;
   padding:1.8em;
-  text-shadow: 3px 3px $accent;
+  text-shadow: 3px 3px $link-primary;
   width:100%;
+  box-sizing: border-box;
 
   h1, h2 {
-    text-shadow: 3px 3px $accent;
+    text-shadow: 3px 3px $link-primary;
   }
 
   h1 {
@@ -72,17 +74,17 @@ footer{
 }
 
 a:link {
-  color: $accent;
+  color: $link-primary;
 }
 a:visited {
-  color: $accent;
+  color: $link-primary;
 }
 
 a:hover {
-  color: $accent;
+  color: $link-active;
 }
 a:active {
-  color: $accent;
+  color: $link-active;
 }
 
 #iconRow img {
@@ -102,19 +104,41 @@ a:active {
 }
 
 .ng-valid .mat-form-field-label {
-  color: $alt-accent !important;
+  color: $accent !important;
 }
 
 .p2b-solid-background {
   background-color: $background !important;
 }
 
-mat-card {
+mat-expansion-panel {
   background: rgba(0,0,0, 0.6) !important;
+}
+
+mat-horizontal-stepper, mat-vertical-stepper {
+  background: rgba(0,0,0,0) !important;
 }
 
 .p2b-form-button {
   color: $background;
   background-color: $bookend-background;
   font-family: Lemon, sans-serif;
+}
+
+mat-icon{
+  font-family: 'Material Icons', sans-serif !important;
+}
+
+.mat-icon-button .mat-button-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.fancy-text {
+  font-family: Lemon, sans-serif;
+}
+
+mat-form-field.ng-invalid {
+  margin-bottom: 0.5em;
 }

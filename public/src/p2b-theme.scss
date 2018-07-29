@@ -3,7 +3,7 @@
 @include mat-core();
 
 $p2b-primary: mat-palette($mat-grey, 50, 300, 600);
-$p2b-accent: mat-palette($mat-orange);
+$p2b-accent: mat-palette($mat-cyan);
 $p2b-warn: mat-palette($mat-yellow);
 
 .p2b-theme {
@@ -22,3 +22,5 @@ $bookend-text: black;
 $warn: mat-color($p2b-warn);
 $primary: mat-color($p2b-primary);
 $background: #131313;
+$link-primary: orange;
+$link-active: lime;

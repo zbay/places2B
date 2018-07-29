@@ -1,3 +1,7 @@
 <a [routerLink]="['/about']">What is this?</a>
 <app-search></app-search>
+<mat-progress-spinner *ngIf="isLoading"
+  mode="indeterminate"
+  color="primary"
+  value="50"></mat-progress-spinner>
 <app-results></app-results>
