@@ -10,7 +10,9 @@ import { DestinationResult,
          SearchQuery } from '@models/types';
 import { DestinationType } from '@models/enums';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class SearchService {
 
   private _isSearchPending = new Subject<boolean>();
@@ -46,7 +48,7 @@ export class SearchService {
       },
       err => {
         console.log(err);
-        this._latestSearchError.next(JSON.parse(err._body).error);
+        this._latestSearchError.next('Failed search!');
       },
       () => this._isSearchPending.next(false));
   }

@@ -22,7 +22,6 @@ import { SubscribingComponent } from '@app/modules/shared/components/subscribing
 export class SearchComponent extends SubscribingComponent implements OnInit {
   DestinationType = DestinationType;
   destinationTypes = DestinationTypes;
-  errorMessage: string = null;
   fb = new FormBuilder();
   optionsGroup: FormGroup = this.fb.group({
     nothing: ['']
@@ -54,8 +53,6 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
     this._searchService.latestSearchError
       .pipe(takeUntil(this.destroy$))
       .subscribe((err: string) => {
-        // TODO: display error
-        this.errorMessage = err;
         this.isSearchOpen = true;
         this.hasSubmitted = false;
       });

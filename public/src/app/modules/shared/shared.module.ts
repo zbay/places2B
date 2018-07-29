@@ -6,10 +6,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SubscribingComponent } from '@app/modules/shared/components/subscribing/subscribing.component';
 
 import { MaterialModule } from '@app/modules/material/material.module';
+import { ErrorDialogComponent } from './components/error-dialog/error-dialog/error-dialog.component';
 
 @NgModule({
   declarations: [
-    SubscribingComponent
+    SubscribingComponent,
+    ErrorDialogComponent
   ],
   imports: [
     CommonModule,

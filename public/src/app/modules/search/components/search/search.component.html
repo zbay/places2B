@@ -158,13 +158,15 @@
             <button mat-button color="accent" matStepperPrevious>
               <mat-icon>arrow_backward</mat-icon>
             </button>
+            <button mat-button color="accent" matStepperNext>
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+          <div>
             <button class="p2b-form-button submit"
                     *ngIf="locationGroup.valid && destinationsGroup.valid"
                     (click)="triggerSearch()">
               Submit your plan
-            </button>
-            <button mat-button color="accent" matStepperNext>
-              <mat-icon>arrow_forward</mat-icon>
             </button>
           </div>
         </div>
