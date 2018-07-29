@@ -50,7 +50,7 @@ export class HomeComponent extends SubscribingComponent implements OnInit {
       maxWidth: '90%',
       panelClass: 'p2b-theme',
       data: {
-        message: message || 'Places 2B is experiencing technical difficulties. Please try your search again later.'
+        message: message || 'Places 2B is experiencing technical difficulties. Please try to search again later.'
       }
     };
 
@@ -58,3 +58,6 @@ export class HomeComponent extends SubscribingComponent implements OnInit {
   }
 
 }
+
+// Md+: row. Equal height
+// Sm-: Column. Equal width

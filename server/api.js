@@ -1,14 +1,10 @@
-// problem: seasonal events show up in results
 'use strict';
-const express = require("express");
 const yelp = require('yelp-fusion');
 const path = require('path');
 require('dotenv').config(); // access process.env variables
 
-const clientId = process.env.YELP_CLIENT_ID;
 const apiKey = process.env.YELP_API_KEY;
 
-//const app = express();
 const client = yelp.client(apiKey);
 
 module.exports = function Routes(app){
@@ -21,8 +17,10 @@ module.exports = function Routes(app){
         let randomDestinations = [];
         let count = 0;
 
+
+
         // doesn't repeat, if multiple queries of same type
-        const searchRequests = requestData.queryTypes.map((queryCategory) => {
+        requestData.queryTypes.map((queryCategory) => {
           allDestinations[queryCategory] = {};
             return setTimeout(() => client.search({
               location: requestData.city,
@@ -77,16 +75,7 @@ module.exports = function Routes(app){
 
     function randomDestinationFromArray(results, category){
       if(results.length === 0){
-        return {
-            name: "No result! Try again?",
-            loc: "N/A",
-            image_url: "./assets/question-mark.jpg",
-            url: "",
-            phone: "",
-            rating: [],
-            reviews: "Reviews: 0",
-            category: category
-        };
+        return getEmptyDestination(category);
       }  else{
           const randomDest = results[Math.floor(Math.random() * results.length)];
           console.log(randomDest);
@@ -102,7 +91,8 @@ module.exports = function Routes(app){
               phone: randomDest.display_phone || "N/A",
               rating: stars,
               reviews: "Yelp reviews: " + (randomDest.review_count ? randomDest.review_count : "0"),
-              category: category
+              category: category,
+              price: randomDest.price || ''
           };
       }
     }
@@ -111,23 +101,14 @@ module.exports = function Routes(app){
       const destinationsOfType = destinations[category];
       const keys = destinationsOfType ? Object.keys(destinationsOfType) : [];
       if(keys.length === 0){
-        return {
-            name: "No result! Try again?",
-            loc: "N/A",
-            image_url: "./assets/question-mark.jpg",
-            url: "",
-            phone: "",
-            rating: [],
-            reviews: "Reviews: 0",
-            category: category
-        };
+        return getEmptyDestination(category);
       }
       else{
         const randomIndex = Math.round(Math.random() * keys.length);
         const randomDest = destinationsOfType[keys[randomIndex]];
         let stars = [];
         console.log(randomDest);
-        // RandomDest is undefined??
+        // randomDest is sometimes undefined??
         for(let i = 0; i < Math.round(randomDest.rating); i++){
           stars.push('*');
         }
@@ -139,9 +120,9 @@ module.exports = function Routes(app){
             phone: randomDest.display_phone || "N/A",
             rating: stars,
             reviews: "Yelp reviews: " + (randomDest.review_count ? randomDest.review_count : "0"),
-            category: category
+            category: category,
+            price: randomDest.price
         });
-        console.log();
         if(randomDest && randomDest.id){
           for(let searchCategory in destinations){
             delete destinations[searchCategory][randomDest.id]; // prevents redundancy
@@ -172,10 +153,23 @@ module.exports = function Routes(app){
             radius = radius * 1609.344; // convert radius from miles to meters
             if(radius > 40000){ // yelp only accepts up to 40000 meters
                 radius = 40000;
-            }
-            if(radius < 0){
+            } else if(radius < 0){
                 radius = 0;
             }
             return Math.floor(radius); // yelp API only accepts integers for distance
     }
-}
+
+    function getEmptyDestination(category) {
+        return {
+            name: "No result! Try again?",
+            loc: "N/A",
+            image_url: "./assets/question-mark.jpg",
+            url: "",
+            phone: "",
+            rating: [],
+            reviews: "Reviews: 0",
+            category: category,
+            price: ''
+        };
+    }
+};

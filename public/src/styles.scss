@@ -50,6 +50,15 @@ button{
   h2 {
     font-size: 1.8em;
   }
+
+  @media(max-width: 600px) {
+    h1{
+      font-size: 1.6em;
+    }
+    h2 {
+      font-size: 1.1em;
+    }
+  }
 }
 
 .jumbotron {
@@ -115,8 +124,19 @@ mat-expansion-panel {
   background: rgba(0,0,0, 0.6) !important;
 }
 
-mat-horizontal-stepper, mat-vertical-stepper {
+.mat-expansion-panel-content {
+  background: rgba(0,0,0, 0.0);
+}
+.mat-expansion-panel-header {
+  background: rgba(0,0,0, 0.8);
+}
+
+mat-vertical-stepper {
   background: rgba(0,0,0,0) !important;
+}
+
+mat-form-field {
+  font-size: 1.5em !important;
 }
 
 .p2b-form-button {
@@ -154,4 +174,23 @@ mat-form-field.ng-invalid {
   font-size: 50px;
   height: 50px !important;
   width: 50px !important;
+}
+
+.result-box {
+  border: 0.75em solid $bookend-border;
+  box-sizing: border-box;
+  border-radius: 0.75em;
+  margin: 0.5em;
+  /* lightgray from 0 to 10px, white from 10 to 20px */
+  background: repeating-linear-gradient(
+      45deg,
+      lightgray,
+      lightgray 10px,
+      white 10px,
+      white 20px
+  );
+}
+
+mat-step {
+  border: 1px solid white !important;
 }

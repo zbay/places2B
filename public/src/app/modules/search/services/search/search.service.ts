@@ -53,7 +53,6 @@ export class SearchService {
       () => this._isSearchPending.next(false));
   }
 
-  // get swap working again
   swap(category: DestinationType, index: number): void {
     const lastQuery: SearchQuery = Object.assign({}, this._latestQuery);
     lastQuery.category = category;

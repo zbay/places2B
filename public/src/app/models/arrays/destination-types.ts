@@ -7,14 +7,14 @@ export const DestinationTypes = [
   },
   {
     key: DestinationType.Active,
-    description: 'Do something active'
+    description: 'Be active'
   },
   {
     key: DestinationType.Arts,
-    description: 'Enjoy entertainment'
+    description: 'Be entertained'
   },
   {
     key: DestinationType.Nightlife,
-    description: 'Go out and drink'
+    description: 'Go out'
   }
 ];

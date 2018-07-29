@@ -1,11 +1,9 @@
-.destImg{
-    min-height:60%;
-    min-width:40%;
-    max-height:300px;
-    max-width:95%;
-    margin: 0.3em auto 1em;
-    border: 0.3em groove white;
-    border-radius: 0.2em;
+img {
+  max-height: 400px;
+  max-width: 80%;
+  border: 0.3em groove white;
+  border-radius: 0.2em;
+  margin: 0.3em auto 1em;
 }
 
 #resultsList{
@@ -14,37 +12,32 @@
 }
 
 #disclaimer{
-  margin-top:1em;
+  margin-top:2em;
 }
 
 li{
-    border: 0.75em solid #D80032;
-    border-radius: 0.75em;
-    margin: 0.5em;
-    /* lightgray from 0 to 10px, white from 10 to 20px */
-background: repeating-linear-gradient(
-  45deg,
-  lightgray,
-  lightgray 10px,
-  white 10px,
-  white 20px
-);
-}
-.inside-li{
+  min-width: 200px;
+  .restaurant-data{
+    box-sizing: border-box;
     color:black;
-}
-.left-column{
-    margin-top:2%;
-    margin-bottom:5%;
-    margin-left:3%;
-    margin-right:3%;
-    height:100%;
-    border: 0.2em solid black;
-    background-color:white;
-    padding-bottom: 0.3em;
+    background-color: white;
+    border: 2px solid black;
+    padding: 5px;
+  }
+
+  .restaurant-data, .destImg {
+    margin: 10px !important;
+    flex: 1;
+  }
 }
 
 .title{
   font-size:2em;
   text-decoration:underline;
+}
+
+@media(max-width: 500px) {
+  .title {
+    font-size: 1.4em;
+  }
 }

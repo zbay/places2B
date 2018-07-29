@@ -1,14 +1,22 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 export const Animations = {
-  slideUp: trigger('slideUp', [
-    state(':enter', style({
-      transform: 'scaleY(1)',
-    })),
-    state('hiding',   style({
-      transform: 'scaleY(0)',
-      display: 'inline'
-    })),
-    transition('* => *', animate('600ms ease-in'))
+  fadeIn: trigger('fadeIn', [
+    transition('void => *', [
+      style({
+        opacity: 0
+      }),
+      animate(300, style({
+        opacity: 1
+      }))
+    ]),
+    transition('* => void', [
+      style({
+        opacity: 1
+      }),
+      animate(300, style({
+        opacity: 0
+      }))
+    ])
   ])
 };

@@ -1,27 +1,24 @@
 <div *ngIf="searchResults.length">
   <h3>Here's a plan!</h3>
   <ol id="resultsList">
-      <li *ngFor="let destination of searchResults; let idx = index" class="container">
-          <div class="row inside-li">
-              <div class="col-lg-1"></div>
-              <div class="col-lg-5 left-column">
-                  <a href="{{destination.url}}" class="title">{{destination.name || "No result! Try again?"}}</a>
-                  <br />
-                  {{destination.loc || "N/A"}}
-                  <br />
-                  {{destination.phone}}
-                  <br />
-                  <span *ngFor="let star of destination.rating">&#9733;</span>
-                  <br />
-                  {{destination.reviews}}
-                  <br /><br />
-                  <button (click)="triggerSwap(destination.category, idx)">Somewhere else?</button>
-              </div>
-              <div class="col-lg-1"></div>
-              <div class="col-lg-4 right-column">
-                  <img class="destImg" src="{{destination.image_url}}"/>
-              </div>
-              <div class="col-lg-1"></div>
+      <li *ngFor="let destination of searchResults; let idx = index" class="result-box" [@fadeIn]>
+          <div>
+            <div class="restaurant-data">
+              <a href="{{destination.url}}" class="title">{{destination.name || "No result! Try again?"}}</a>
+              <br />
+              {{destination.loc || "N/A"}}
+              <br />
+              {{destination.phone}}
+              <br />
+              <span *ngFor="let star of destination.rating">&#9733;</span>
+              <br />
+              {{destination.reviews}}
+              <br />
+              {{destination.price}}
+              <br />
+              <button (click)="triggerSwap(destination.category, idx)" class="p2b-form-button">Somewhere else?</button>
+            </div>
+              <img class="destImg" src="{{destination.image_url}}" />
           </div>
       </li>
   </ol>

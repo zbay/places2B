@@ -6,8 +6,10 @@ import { DestinationResult } from '@models/types';
 import { DestinationType } from '@models/enums';
 import { SearchService } from '@app/modules/search/services/search/search.service';
 import { SubscribingComponent } from '@app/modules/shared/components/subscribing/subscribing.component';
+import { Animations } from '@models/animations';
 
 @Component({
+  animations: [Animations.fadeIn],
   selector: 'app-results',
   templateUrl: './results.component.html',
   styleUrls: ['./results.component.scss']
@@ -27,7 +29,7 @@ export class ResultsComponent extends SubscribingComponent implements OnInit {
       });
   }
 
-  triggerSwap(category: DestinationType, index: number){
+  triggerSwap(category: DestinationType, index: number) {
     this._searchService.swap(category, index);
   }
 

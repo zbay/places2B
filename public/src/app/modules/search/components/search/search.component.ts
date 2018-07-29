@@ -7,6 +7,7 @@ import { Component,
          OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 
+import { Animations } from '@models/animations';
 import { DestinationType } from '@models/enums';
 import { DestinationTypes } from '@models/arrays/destination-types';
 import { SearchQuery } from '@models/types';
@@ -15,6 +16,7 @@ import { SearchService } from '@app/modules/search/services/search/search.servic
 import { SubscribingComponent } from '@app/modules/shared/components/subscribing/subscribing.component';
 
 @Component({
+  animations: [Animations.fadeIn],
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss']
