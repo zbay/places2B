@@ -5,10 +5,17 @@ require('dotenv').config(); // access process.env variables
 
 const apiKey = process.env.YELP_API_KEY;
 
-const client = yelp.client(apiKey);
+const yelpClient = yelp.client(apiKey);
 
 const throttledQueue = require('throttled-queue');
 const yelpThrottle = throttledQueue(1, 500); // dole out Yelp API calls every half-second
+
+const redis = require("redis"),
+    redisClient = redis.createClient();
+
+const { Observable } = require('rxjs');
+const { first } = require('rxjs/operators');
+
 
 module.exports = function Routes(app){
 
@@ -20,31 +27,46 @@ module.exports = function Routes(app){
         let randomDestinations = [];
         let count = 0;
 
+        const radius = fixRadius(requestData.radius);
+
         // doesn't repeat, if multiple queries of same type
         requestData.queryTypes.map((queryCategory) => {
           allDestinations[queryCategory] = {};
-            return yelpThrottle(() => client.search({
+            return yelpThrottle(() => yelpClient.search({
               location: requestData.city,
-              radius: fixRadius(requestData.radius),
+              radius: radius,
               categories: queryCategory
             }).then(response => {
-              response.jsonBody.businesses.forEach(business => {
-                if(!allDestinations[(business.id)]){
-                  if(!allDestinations[queryCategory][business.id]){
-                    allDestinations[queryCategory][business.id] = business;
-                  }
-                  allDestinations[queryCategory][business.id] = business;
-                }
-              });
-              for(let i = 0; i < destinations.length; i++){
-                if(destinations[i].kind === queryCategory){
-                  randomDestinations[i] = randomDestination(allDestinations, queryCategory);
-                  count++;
-                }
-              }
-              if(count >= destinations.length){
-                res.json({results: randomDestinations});
-              }
+                const cacheKey = getCacheKey({city: requestData.city, radius: radius, category: queryCategory});
+                retrieveFromRedis(cacheKey).pipe(first()).subscribe((results) => {
+                    if (results && results.length > 0) {
+                        console.log("Many results! " + results.length);
+                    } else {
+                        console.log("No results");
+                    }
+                    saveResultsToRedis(cacheKey, queryCategory, response.jsonBody.businesses);
+                    response.jsonBody.businesses.forEach(business => {
+                        if(!allDestinations[(business.id)]){
+                            if(!allDestinations[queryCategory][business.id]){
+                                allDestinations[queryCategory][business.id] = business;
+                            }
+                            allDestinations[queryCategory][business.id] = business;
+                        }
+                    });
+                    for(let i = 0; i < destinations.length; i++){
+                        if(destinations[i].kind === queryCategory){
+                            randomDestinations[i] = randomDestination(allDestinations, queryCategory);
+                            count++;
+                        }
+                    }
+                    if(count >= destinations.length){
+                        res.json({results: randomDestinations});
+                    }
+                }, (err) => {
+                    console.log("Redis error!");
+                    res.sendStatus(500).json({error: "Result caching messed up. Try again later!"});
+                });
+
             })
             .catch((err) => {
               console.log(err);
@@ -56,7 +78,7 @@ module.exports = function Routes(app){
     app.post("/api/swap", function(req, res){
         const requestData = req.body;
         yelpThrottle(() => {
-            client.search({
+            yelpClient.search({
                 location: requestData.city,
                 radius: fixRadius(requestData.radius),
                 categories: requestData.category
@@ -110,8 +132,7 @@ module.exports = function Routes(app){
         const randomIndex = Math.round(Math.random() * keys.length);
         const randomDest = destinationsOfType[keys[randomIndex]];
         let stars = [];
-        console.log(randomDest);
-        // randomDest is sometimes undefined??
+        // console.log(randomDest);
         for(let i = 0; i < Math.round(randomDest.rating); i++){
           stars.push('*');
         }
@@ -153,13 +174,13 @@ module.exports = function Routes(app){
     }
 
     function fixRadius(radius){
-            radius = radius * 1609.344; // convert radius from miles to meters
-            if(radius > 40000){ // yelp only accepts up to 40000 meters
-                radius = 40000;
-            } else if(radius < 0){
-                radius = 0;
-            }
-            return Math.floor(radius); // yelp API only accepts integers for distance
+        radius = radius * 1609.344; // convert radius from miles to meters
+        if(radius > 40000){ // yelp only accepts up to 40000 meters
+            radius = 40000;
+        } else if(radius < 0){
+            radius = 0;
+        }
+        return Math.floor(radius); // yelp API only accepts integers for distance
     }
 
     function getEmptyDestination(category) {
@@ -174,5 +195,75 @@ module.exports = function Routes(app){
             category: category,
             price: ''
         };
+    }
+
+    function retrieveFromRedis(cacheKey) {
+        return Observable.create(observer => {
+            redisClient.hgetall(cacheKey, function (err, obj) {
+                if (err) {
+                    console.log('retrieval error');
+                    observer.error(err);
+                } else {
+                    const results = [];
+                    if(obj) {
+                        console.log('Retrieved data?');
+                        for (let key in obj) {
+                            if (obj.hasOwnProperty(key)) {
+                                results.push(obj[key]);
+                            }
+                        }
+                    } else {
+                        console.log('No retrieval');
+                    }
+                    observer.next(results);
+                }
+            });
+        });
+    }
+
+    function saveResultsToRedis(cacheKey, category, results) {
+        results.forEach((result) => {
+            redisClient.hset(cacheKey, result.id, JSON.stringify(cleanResult(result, category)));
+        });
+        retrieveFromRedis(cacheKey);
+    }
+
+    function getCacheKey(queryData) {
+        return queryData.city.toUpperCase() + queryData.category + roundDownRadius(queryData.radius);
+    }
+
+    function cleanResult(result, category) {
+        if(result){
+            result = {
+                loc: result.location.display_address.join(", ") || 'Varies',
+                name: result.name || "Unnamed",
+                image_url: result.image_url || "./assets/question-mark.jpg",
+                url: result.url || "N/A",
+                phone: result.display_phone || "N/A",
+                rating: getStars(result.stars),
+                reviews: "Yelp reviews: " + (result.review_count ? result.review_count : "0"),
+                category: category,
+                price: result.price || '',
+                // the next two are unused but may be useful later
+                coordinates: result.coordinates,
+                categories: result.coordinates
+            };
+        }
+        return result;
+    }
+
+    function getStars(numStars){
+        if (!numStars) {
+            numStars = 0;
+        }
+        let stars = [];
+        for(let i = 0; i < Math.round(numStars); i++){
+            stars.push('*');
+        }
+        return stars;
+    }
+
+    function roundDownRadius(num) {
+        return Math.floor(num / 10001);
     }
 };
