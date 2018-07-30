@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 import { BehaviorSubject,
          Subject } from 'rxjs';
-import { first } from 'rxjs/operators';
+import { first, retry } from 'rxjs/operators';
 
 import { environment } from '@env/environment';
 import { DestinationResult,
@@ -39,7 +39,7 @@ export class SearchService {
   search(query: SearchQuery): void {
     this._isSearchPending.next(true);
     this._http.post(`${environment.apiEndpoint}/api/search`, SearchService.queryWithDestinationTypes(query))
-      .pipe(first())
+      .pipe(first(), retry(2))
       .subscribe((data: any) => {
         this._latestQuery = query;
         if (data.results) {
@@ -59,13 +59,16 @@ export class SearchService {
     lastQuery.otherDests = this.getNames(); // get the names from latest query names
     console.log(lastQuery);
     this._http.post(`${environment.apiEndpoint}/api/swap`, lastQuery)
-      .pipe(first())
+      .pipe(first(), retry(2))
       .subscribe((destination: DestinationResult) => {
         console.log(destination);
         const results = this._latestSearchResults.value;
         results[index] = destination;
         this._latestSearchResults.next(results);
-      });
+      },
+        err => {
+          this._latestSearchError.next('Failed swap!');
+        });
   }
 
   getNames(): string[] {

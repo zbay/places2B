@@ -7,6 +7,9 @@ const apiKey = process.env.YELP_API_KEY;
 
 const client = yelp.client(apiKey);
 
+const throttledQueue = require('throttled-queue');
+const yelpThrottle = throttledQueue(1, 500); // dole out Yelp API calls every half-second
+
 module.exports = function Routes(app){
 
     app.post("/api/search", function process(req, res){ // process search requests
@@ -17,12 +20,10 @@ module.exports = function Routes(app){
         let randomDestinations = [];
         let count = 0;
 
-
-
         // doesn't repeat, if multiple queries of same type
         requestData.queryTypes.map((queryCategory) => {
           allDestinations[queryCategory] = {};
-            return setTimeout(() => client.search({
+            return yelpThrottle(() => client.search({
               location: requestData.city,
               radius: fixRadius(requestData.radius),
               categories: queryCategory
@@ -48,24 +49,26 @@ module.exports = function Routes(app){
             .catch((err) => {
               console.log(err);
               res.sendStatus(500).json({error: "The Yelp API messed up. Try again later!"});
-            }), 500);
+            }));
         });
     });
 
     app.post("/api/swap", function(req, res){
         const requestData = req.body;
-        client.search({
+        yelpThrottle(() => {
+            client.search({
                 location: requestData.city,
                 radius: fixRadius(requestData.radius),
                 categories: requestData.category
-        }).then(response => {
-          let results = response.jsonBody.businesses;
-          deleteRedundant(requestData.otherDests, results); // delete redundant destinations from other categories
-          res.json(randomDestinationFromArray(results, requestData.category));
-        })
-        .catch((err) => {
-            console.log(err);
-            res.sendStatus(500).json({error: "The Yelp API messed up. Try again later!"});
+            }).then(response => {
+                let results = response.jsonBody.businesses;
+                deleteRedundant(requestData.otherDests, results); // delete redundant destinations from other categories
+                res.json(randomDestinationFromArray(results, requestData.category));
+            })
+                .catch((err) => {
+                    console.log(err);
+                    res.sendStatus(500).json({error: "The Yelp API messed up. Try again later!"});
+                });
         });
   });
 

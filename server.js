@@ -8,7 +8,7 @@ app.use(express.static(path.join(__dirname, '/public/dist')));
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  if ('OPTIONS' == req.method) {
+  if ('OPTIONS' === req.method) {
     res.sendStatus(200);
   }
   next();
