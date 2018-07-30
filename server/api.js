@@ -222,8 +222,10 @@ module.exports = function Routes(app){
     }
 
     function saveResultsToRedis(cacheKey, category, results) {
+        const secondsPerWeek = 60*60*24*70;
         results.forEach((result) => {
             redisClient.hset(cacheKey, result.id, JSON.stringify(cleanResult(result, category)));
+            redisClient.expire(cacheKey, secondsPerWeek);
         });
         retrieveFromRedis(cacheKey);
     }
