@@ -13,21 +13,21 @@ const yelpThrottle = throttledQueue(1, 500); // dole out Yelp API calls every ha
 const redis = require("redis"),
     redisClient = redis.createClient();
 
+const maxRandomTries = 10;
+
 module.exports = function Routes(app) {
 
     app.post("/api/search", async function process(req, res) { // process search requests
         const requestData = req.body;
         const destinations = requestData.destinations;
 
-        const allDestinations = {};
         let randomDestinations = [];
-        let count = 0;
+        let randomRestinationsSet = new Set();
 
         const radius = fixRadius(requestData.radius);
 
         // doesn't repeat, if multiple queries of same type
         requestData.queryTypes.map(async (queryCategory) => {
-            allDestinations[queryCategory] = {};
             const cacheKey = getCacheKey({
                 city: requestData.city,
                 radius: radius,
@@ -36,46 +36,12 @@ module.exports = function Routes(app) {
 
             await retrieveFromRedis(cacheKey).then((results) => {
                 if (results && results.length > 0) {
-                    console.log("Many results! " + results.length);
-                    results.forEach(business => {
-                        if (!allDestinations[(business.id)]) {
-                            if (!allDestinations[queryCategory][business.id]) {
-                                allDestinations[queryCategory][business.id] = business;
-                            }
-                            allDestinations[queryCategory][business.id] = business;
-                        }
-                    });
-                    for (let i = 0; i < destinations.length; i++) {
-                        if (destinations[i].kind === queryCategory) {
-                            randomDestinations[i] = randomDestination(allDestinations, queryCategory);
-                            count++;
-                        }
-                    }
-                    if (count >= destinations.length) {
-                        res.json({results: randomDestinations});
-                    }
+                    selectRandomResult(results, randomDestinations, randomRestinationsSet, destinations.length, res);
                 } else {
-                    console.log("No results");
                     yelpThrottle(async () => {
                         await yelpQuery(requestData.city, radius, queryCategory).then(async (response) => {
                             await saveResultsToRedis(cacheKey, queryCategory, response.jsonBody.businesses).then((businesses) => {
-                                businesses.forEach(business => {
-                                    if (!allDestinations[(business.id)]) {
-                                        if (!allDestinations[queryCategory][business.id]) {
-                                            allDestinations[queryCategory][business.id] = business;
-                                        }
-                                        allDestinations[queryCategory][business.id] = business;
-                                    }
-                                });
-                                for (let i = 0; i < destinations.length; i++) {
-                                    if (destinations[i].kind === queryCategory) {
-                                        randomDestinations[i] = randomDestination(allDestinations, queryCategory);
-                                        count++;
-                                    }
-                                }
-                                if (count >= destinations.length) {
-                                    res.json({results: randomDestinations});
-                                }
+                                selectRandomResult(businesses, randomDestinations, randomRestinationsSet, destinations.length, res);
                             }).catch((err) => {
                                 console.log(err);
                                 res.sendStatus(500).json({error: "Failed to save results!"});
@@ -126,24 +92,6 @@ module.exports = function Routes(app) {
         }
     }
 
-    function randomDestination(destinations, category) {
-        const destinationsOfType = destinations[category];
-        const keys = destinationsOfType ? Object.keys(destinationsOfType) : [];
-        if (keys.length === 0) {
-            return getEmptyDestination(category);
-        }
-        else {
-            const randomIndex = Math.round(Math.random() * keys.length);
-            const randomDest = destinationsOfType[keys[randomIndex]];
-            if (randomDest && randomDest.id) {
-                for (let searchCategory in destinations) {
-                    delete destinations[searchCategory][randomDest.id]; // prevents redundancy
-                }
-            }
-            return randomDest;
-        }
-    }
-
     function deleteResult(name, results) { // helper to delete a chosen result, to prevent redundancy
         for (let i = 0; i < results.length; i++) {
             if (name === results[i].name) {
@@ -171,7 +119,7 @@ module.exports = function Routes(app) {
         return Math.floor(radius); // yelp API only accepts integers for distance
     }
 
-    function getEmptyDestination(category) {
+    function getEmptyDestination() {
         return {
             name: "No result! Try again?",
             loc: "N/A",
@@ -180,7 +128,7 @@ module.exports = function Routes(app) {
             phone: "",
             rating: [],
             reviews: "Reviews: 0",
-            category: category,
+            category: 'none',
             price: ''
         };
     }
@@ -256,6 +204,26 @@ module.exports = function Routes(app) {
 
     function roundDownRadius(num) {
         return Math.floor(num / 10001);
+    }
+
+    function selectRandomResult(results, randomDestinations, randomDestinationsSet, numDestinations, res) {
+        let randomDest;
+        for (let i = 0; i < maxRandomTries; i++) {
+            randomDest = results[Math.floor(Math.random() * results.length)];
+            if (randomDest && !randomDestinationsSet.has(randomDest.id)) {
+                randomDestinations.push(randomDest);
+                randomDestinationsSet.add(randomDest.id);
+                break;
+            } else {
+                randomDest = null;
+            }
+        }
+        if(!randomDest) {
+            randomDestinations.push(getEmptyDestination());
+        }
+        if (randomDestinations.length >= numDestinations) {
+            res.json({results: randomDestinations});
+        }
     }
 
     async function yelpQuery(city, radius, queryCategory) {
