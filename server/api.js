@@ -36,12 +36,12 @@ module.exports = function Routes(app) {
 
             await retrieveFromRedis(cacheKey).then((results) => {
                 if (results && results.length > 0) {
-                    selectRandomResult(results, randomDestinations, randomRestinationsSet, destinations.length, res);
+                    selectRandomResultsForCategory(results, randomDestinations, randomRestinationsSet, destinations, queryCategory, res);
                 } else {
                     yelpThrottle(async () => {
                         await yelpQuery(requestData.city, radius, queryCategory).then(async (response) => {
                             await saveResultsToRedis(cacheKey, queryCategory, response.jsonBody.businesses).then((businesses) => {
-                                selectRandomResult(businesses, randomDestinations, randomRestinationsSet, destinations.length, res);
+                                selectRandomResultsForCategory(businesses, randomDestinations, randomRestinationsSet, destinations, queryCategory, res);
                             }).catch((err) => {
                                 console.log(err);
                                 res.sendStatus(500).json({error: "Failed to save results!"});
@@ -96,7 +96,7 @@ module.exports = function Routes(app) {
         }
     });
 
-    app.all("*", (req, res, next) => { // front-end views
+    app.all("*", (req, res) => { // front-end views
         res.sendFile(path.resolve("./public/dist/index.html"))
     });
 
@@ -197,40 +197,40 @@ module.exports = function Routes(app) {
         return Math.floor(num / 10001);
     }
 
-    function selectRandomResult(results, randomDestinations, randomDestinationsSet, numDestinations, res) {
+    function selectRandomResultsForCategory(results, randomDestinations, randomDestinationsSet, destinations, category, res) {
         let randomDest;
-        for (let i = 0; i < maxRandomTries; i++) {
-            randomDest = results[Math.floor(Math.random() * results.length)];
-            if (randomDest && !randomDestinationsSet.has(randomDest.id)) {
-                randomDestinations.push(randomDest);
-                randomDestinationsSet.add(randomDest.id);
-                break;
-            } else {
-                randomDest = null;
+        for (let i = 0; i < destinations.length; i++){
+            if (destinations[i].kind === category){
+                for (let j = 0; j < maxRandomTries; j++) {
+                    randomDest = results[Math.floor(Math.random() * results.length)];
+                    if (randomDest && !randomDestinationsSet.has(randomDest.id)) {
+                        randomDestinations[i] = randomDest;
+                        randomDestinationsSet.add(randomDest.id);
+                        break;
+                    } else {
+                        randomDest = null;
+                    }
+                    console.log(randomDest);
+                }
+                if(!randomDest) {
+                    randomDestinations[i] = getEmptyDestination();
+                }
+                if (truthyLength(randomDestinations) >= destinations.length) {
+                    res.json({results: randomDestinations});
+                }
             }
-        }
-        if(!randomDest) {
-            randomDestinations.push(getEmptyDestination());
-        }
-        if (randomDestinations.length >= numDestinations) {
-            res.json({results: randomDestinations});
         }
     }
 
     function selectOneRandomResult(results, otherDestIDs, res) {
+        const idSet = new Set(otherDestIDs);
         if(!results.length) {
             res.json(getEmptyDestination());
         } else {
             let randomDest;
             for (let i = 0; i < maxRandomTries; i++) {
                 randomDest = results[Math.floor(Math.random() * results.length)];
-                for (let j = 0; j < otherDestIDs.length; j++){
-                    if(randomDest.id === otherDestIDs[j]) {
-                        randomDest = null;
-                        break;
-                    }
-                }
-                if (randomDest) {
+                if(!idSet.has(randomDest.id)) {
                     break;
                 }
             }
@@ -241,6 +241,10 @@ module.exports = function Routes(app) {
         }
     }
 
+    function truthyLength(arr) {
+        return arr.reduce((count, val) => {return count + !!val}, 0);
+    }
+
     async function yelpQuery(city, radius, queryCategory) {
         return yelpClient.search({
             location: city,
@@ -248,4 +252,4 @@ module.exports = function Routes(app) {
             categories: queryCategory
         });
     }
-}
+};
