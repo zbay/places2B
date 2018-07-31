@@ -4,6 +4,7 @@ export interface SearchQuery {
   city: string;
   destinations: { kind: string }[];
   radius: number;
+  price: string;
 
   // Derived from destinations. Not part of the user-originating query
   queryTypes?: DestinationType[];

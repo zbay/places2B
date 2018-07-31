@@ -28,9 +28,10 @@ module.exports = function Routes(app) {
         // doesn't repeat, if multiple queries of same type
         requestData.queryTypes.map(async (queryCategory) => {
             const cacheKey = utilities.getCacheKey({
+                category: queryCategory,
                 city: requestData.city,
+                price: requestData.price,
                 radius: radius,
-                category: queryCategory
             });
 
             await redisHelper.retrieveFromRedis(cacheKey).then((results) => {
@@ -39,13 +40,13 @@ module.exports = function Routes(app) {
                     utilities.selectRandomResultsForCategory(randomConfig);
                 } else {
                     yelpThrottle(async () => {
-                        await yelpQuery(requestData.city, radius, queryCategory).then(async (response) => {
+                        await yelpQuery(requestData.city, radius, queryCategory, requestData.price).then(async (response) => {
                             await redisHelper.saveResultsToRedis(cacheKey, queryCategory, response.jsonBody.businesses).then((businesses) => {
                                 const randomConfig = {results: businesses, randomDestinations, randomDestinationsSet, destinations, category: queryCategory, res};
                                 utilities.selectRandomResultsForCategory(randomConfig);
                             }).catch((err) => {
                                 console.log(err);
-                                res.sendStatus(500).json({error: "Failed to save results!"});
+                                res.sendStatus(500).json({error: "Failed to save results to cache!"});
                             });
                         }).catch((err) => {
                             console.log(err);
@@ -55,7 +56,7 @@ module.exports = function Routes(app) {
                 }
             }).catch((err) => {
                 console.log(err);
-                res.sendStatus(500).json({error: "Failed Redis retrieval. Try again later!"});
+                res.sendStatus(500).json({error: "Failed cache retrieval. Try again later!"});
             });
         });
 
@@ -77,7 +78,7 @@ module.exports = function Routes(app) {
                     utilities.selectOneRandomResult(results, requestData.otherDestIDs, res);
                 } else {
                     yelpThrottle(async () => {
-                        await yelpQuery(requestData.city, radius, requestData.category).then(async (response) => {
+                        await yelpQuery(requestData.city, radius, requestData.category, requestData.price).then(async (response) => {
                             await redisHelper.saveResultsToRedis(cacheKey, requestData.category, response.jsonBody.businesses).then((businesses) => {
                                 utilities.selectOneRandomResult(businesses, requestData.otherDestIDs, res);
                             }).catch((err) => {
@@ -97,15 +98,17 @@ module.exports = function Routes(app) {
         }
     });
 
-    app.all("*", (req, res) => { // front-end views
+    app.all("*", (req, res) => { // front-end code
         res.sendFile(path.resolve("./public/dist/index.html"))
     });
 
-    async function yelpQuery(city, radius, queryCategory) {
+    async function yelpQuery(city, radius, queryCategory, price) {
         return yelpClient.search({
+            categories: queryCategory,
+            limit: 50,
             location: city,
+            price: price,
             radius: radius,
-            categories: queryCategory
         });
     }
 };

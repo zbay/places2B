@@ -26,7 +26,8 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
   destinationTypes = DestinationTypes;
   fb = new FormBuilder();
   optionsGroup: FormGroup = this.fb.group({
-    nothing: ['']
+    minPrice: [1, Validators.required],
+    maxPrice: [4, Validators.required]
   });
   locationGroup: FormGroup = this.fb.group({
     city: ['Alexandria, VA', Validators.required],
@@ -38,6 +39,17 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
   });
   hasSubmitted = false;
   isSearchOpen = true;
+
+  private static toPriceString(min: number, max: number): string {
+    let priceString = '';
+    for (let i = min; i <= max; i++) {
+      priceString += i;
+      if (i !== max) {
+        priceString += ',';
+      }
+    }
+    return priceString;
+  }
 
   get destinations() {
     return this.destinationsGroup.get('destinations') as FormArray;
@@ -58,6 +70,26 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
         this.isSearchOpen = true;
         this.hasSubmitted = false;
       });
+
+    // automatically adjust price sliders if the user puts them in a contradictory state
+    this.optionsGroup.get('minPrice').valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((minPrice) => {
+        if (minPrice === 0) {
+          this.optionsGroup.controls.minPrice.setValue(1);
+        } else if(minPrice > this.optionsGroup.get('maxPrice').value) {
+          this.optionsGroup.controls.maxPrice.setValue(minPrice);
+        }
+      });
+    this.optionsGroup.get('maxPrice').valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((maxPrice) => {
+        if (maxPrice === 0) {
+          this.optionsGroup.controls.maxPrice.setValue(1);
+        } else if(maxPrice < this.optionsGroup.get('minPrice').value) {
+          this.optionsGroup.controls.minPrice.setValue(maxPrice);
+        }
+      });
   }
 
   removeDestination() {
@@ -69,8 +101,10 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
   }
 
   triggerSearch() {
-    const searchQuery: SearchQuery = { city: '' + this.locationGroup.get('city').value,
+    const searchQuery: SearchQuery = {
+      city: '' + this.locationGroup.get('city').value,
       radius: parseInt(this.locationGroup.get('radius').value, 10),
+      price: SearchComponent.toPriceString(this.optionsGroup.get('minPrice').value, this.optionsGroup.get('maxPrice').value),
       destinations: this.destinations.controls
         .map((dest: AbstractControl) => ({kind: '' + dest.value}))
     };

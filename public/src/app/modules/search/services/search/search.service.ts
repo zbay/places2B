@@ -39,7 +39,7 @@ export class SearchService {
   search(query: SearchQuery): void {
     this._isSearchPending.next(true);
     this._http.post(`${environment.apiEndpoint}/api/search`, SearchService.queryWithDestinationTypes(query))
-      .pipe(first(), retry(2))
+      .pipe(first(), retry(1))
       .subscribe((data: any) => {
         this._latestQuery = query;
         if (data.results) {
@@ -59,7 +59,7 @@ export class SearchService {
     lastQuery.otherDestIDs = this.getIDs(); // get the names from latest query names
     console.log(lastQuery);
     this._http.post(`${environment.apiEndpoint}/api/swap`, lastQuery)
-      .pipe(first(), retry(2))
+      .pipe(first(), retry(1))
       .subscribe((destination: DestinationResult) => {
         console.log(destination);
         const results = this._latestSearchResults.value;

@@ -53,7 +53,7 @@
             </mat-form-field>
           </div>
           <br />
-          <div fxLayout="row" fxLayoutAlign="space-around center">
+          <div fxLayout="row" fxLayoutAlign="center center">
             <button mat-button color="accent"
                     [disabled]="destinations.controls.length >= 10"
                     (click)="addDestination()">
@@ -86,7 +86,30 @@
     </mat-step>
     <mat-step [stepControl]="optionsGroup">
       <ng-template matStepLabel="">Extra criteria (optional)</ng-template>
-      <div class="step-content">Coming soon...</div>
+      <div [formGroup]="optionsGroup"
+           class="step-content margin-above"
+           fxLayout="row" fxLayoutAlign="space-around center">
+        <div>
+          <h4 class="fancy-text">Min price</h4>
+          <mat-slider min="0"
+                      max="4"
+                      step="1"
+                      showTicks="true"
+                      thumbLabel="false"
+                      formControlName="minPrice">
+          </mat-slider>
+        </div>
+        <div>
+          <h4 class="fancy-text">Max price</h4>
+          <mat-slider min="0"
+                      max="4"
+                      step="1"
+                      showTicks="true"
+                      thumbLabel="false"
+                      formControlName="maxPrice">
+          </mat-slider>
+        </div>
+      </div>
       <br />
       <button mat-button color="accent" matStepperPrevious>
         <mat-icon>arrow_upward</mat-icon>
