@@ -13,13 +13,9 @@ const yelpThrottle = throttledQueue(1, 500); // dole out Yelp API calls every ha
 const redis = require("redis"),
     redisClient = redis.createClient();
 
-const { Observable } = require('rxjs');
-const { first } = require('rxjs/operators');
+module.exports = function Routes(app) {
 
-
-module.exports = function Routes(app){
-
-    app.post("/api/search", function process(req, res){ // process search requests
+    app.post("/api/search", async function process(req, res) { // process search requests
         const requestData = req.body;
         const destinations = requestData.destinations;
 
@@ -30,52 +26,75 @@ module.exports = function Routes(app){
         const radius = fixRadius(requestData.radius);
 
         // doesn't repeat, if multiple queries of same type
-        requestData.queryTypes.map((queryCategory) => {
-          allDestinations[queryCategory] = {};
-            return yelpThrottle(() => yelpClient.search({
-              location: requestData.city,
-              radius: radius,
-              categories: queryCategory
-            }).then(response => {
-                const cacheKey = getCacheKey({city: requestData.city, radius: radius, category: queryCategory});
-                retrieveFromRedis(cacheKey).pipe(first()).subscribe((results) => {
-                    if (results && results.length > 0) {
-                        console.log("Many results! " + results.length);
-                    } else {
-                        console.log("No results");
-                    }
-                    saveResultsToRedis(cacheKey, queryCategory, response.jsonBody.businesses);
-                    response.jsonBody.businesses.forEach(business => {
-                        if(!allDestinations[(business.id)]){
-                            if(!allDestinations[queryCategory][business.id]){
+        requestData.queryTypes.map(async (queryCategory) => {
+            allDestinations[queryCategory] = {};
+            const cacheKey = getCacheKey({
+                city: requestData.city,
+                radius: radius,
+                category: queryCategory
+            });
+
+            await retrieveFromRedis(cacheKey).then((results) => {
+                if (results && results.length > 0) {
+                    console.log("Many results! " + results.length);
+                    results.forEach(business => {
+                        if (!allDestinations[(business.id)]) {
+                            if (!allDestinations[queryCategory][business.id]) {
                                 allDestinations[queryCategory][business.id] = business;
                             }
                             allDestinations[queryCategory][business.id] = business;
                         }
                     });
-                    for(let i = 0; i < destinations.length; i++){
-                        if(destinations[i].kind === queryCategory){
+                    for (let i = 0; i < destinations.length; i++) {
+                        if (destinations[i].kind === queryCategory) {
                             randomDestinations[i] = randomDestination(allDestinations, queryCategory);
                             count++;
                         }
                     }
-                    if(count >= destinations.length){
+                    if (count >= destinations.length) {
                         res.json({results: randomDestinations});
                     }
-                }, (err) => {
-                    console.log("Redis error!");
-                    res.sendStatus(500).json({error: "Result caching messed up. Try again later!"});
-                });
-
+                } else {
+                    console.log("No results");
+                    yelpThrottle(async () => {
+                        await yelpQuery(requestData.city, radius, queryCategory).then(async (response) => {
+                            await saveResultsToRedis(cacheKey, queryCategory, response.jsonBody.businesses).then((businesses) => {
+                                businesses.forEach(business => {
+                                    if (!allDestinations[(business.id)]) {
+                                        if (!allDestinations[queryCategory][business.id]) {
+                                            allDestinations[queryCategory][business.id] = business;
+                                        }
+                                        allDestinations[queryCategory][business.id] = business;
+                                    }
+                                });
+                                for (let i = 0; i < destinations.length; i++) {
+                                    if (destinations[i].kind === queryCategory) {
+                                        randomDestinations[i] = randomDestination(allDestinations, queryCategory);
+                                        count++;
+                                    }
+                                }
+                                if (count >= destinations.length) {
+                                    res.json({results: randomDestinations});
+                                }
+                            }).catch((err) => {
+                                console.log(err);
+                                res.sendStatus(500).json({error: "Failed to save results!"});
+                            });
+                        }).catch((err) => {
+                            console.log(err);
+                            res.sendStatus(500).json({error: "The Yelp API messed up. Try again later!"});
+                        })
+                    });
+                }
+            }).catch((err) => {
+                console.log(err);
+                res.sendStatus(500).json({error: "Failed Redis retrieval. Try again later!"});
             })
-            .catch((err) => {
-              console.log(err);
-              res.sendStatus(500).json({error: "The Yelp API messed up. Try again later!"});
-            }));
         });
+
     });
 
-    app.post("/api/swap", function(req, res){
+    app.post("/api/swap", function (req, res) {
         const requestData = req.body;
         yelpThrottle(() => {
             yelpClient.search({
@@ -92,92 +111,61 @@ module.exports = function Routes(app){
                     res.sendStatus(500).json({error: "The Yelp API messed up. Try again later!"});
                 });
         });
-  });
+    });
 
     app.all("*", (req, res, next) => { // front-end views
         res.sendFile(path.resolve("./public/dist/index.html"))
     });
 
-    function randomDestinationFromArray(results, category){
-      if(results.length === 0){
-        return getEmptyDestination(category);
-      }  else{
-          const randomDest = results[Math.floor(Math.random() * results.length)];
-          console.log(randomDest);
-          let stars = [];
-          for(let i = 0; i < Math.round(randomDest.rating); i++){
-            stars.push('*');
-          }
-          return {
-              name: randomDest.name || "Unnamed",
-              loc: randomDest["location"].display_address.join(", ") || "Varies",
-              image_url: randomDest.image_url || "./assets/question-mark.jpg",
-              url: randomDest.url || "N/A",
-              phone: randomDest.display_phone || "N/A",
-              rating: stars,
-              reviews: "Yelp reviews: " + (randomDest.review_count ? randomDest.review_count : "0"),
-              category: category,
-              price: randomDest.price || ''
-          };
-      }
+    function randomDestinationFromArray(results, category) {
+        if (results.length === 0) {
+            return getEmptyDestination(category);
+        } else {
+            const randomDest = results[Math.floor(Math.random() * results.length)];
+            return randomDest;
+        }
     }
 
-    function randomDestination(destinations, category){
-      const destinationsOfType = destinations[category];
-      const keys = destinationsOfType ? Object.keys(destinationsOfType) : [];
-      if(keys.length === 0){
-        return getEmptyDestination(category);
-      }
-      else{
-        const randomIndex = Math.round(Math.random() * keys.length);
-        const randomDest = destinationsOfType[keys[randomIndex]];
-        let stars = [];
-        // console.log(randomDest);
-        for(let i = 0; i < Math.round(randomDest.rating); i++){
-          stars.push('*');
+    function randomDestination(destinations, category) {
+        const destinationsOfType = destinations[category];
+        const keys = destinationsOfType ? Object.keys(destinationsOfType) : [];
+        if (keys.length === 0) {
+            return getEmptyDestination(category);
         }
-        const returnDest = Object.assign({}, {
-            loc: randomDest["location"].display_address.join(", ") || "Varies",
-            name: randomDest.name || "Unnamed",
-            image_url: randomDest.image_url || "./assets/question-mark.jpg",
-            url: randomDest.url || "N/A",
-            phone: randomDest.display_phone || "N/A",
-            rating: stars,
-            reviews: "Yelp reviews: " + (randomDest.review_count ? randomDest.review_count : "0"),
-            category: category,
-            price: randomDest.price
-        });
-        if(randomDest && randomDest.id){
-          for(let searchCategory in destinations){
-            delete destinations[searchCategory][randomDest.id]; // prevents redundancy
-          }
+        else {
+            const randomIndex = Math.round(Math.random() * keys.length);
+            const randomDest = destinationsOfType[keys[randomIndex]];
+            if (randomDest && randomDest.id) {
+                for (let searchCategory in destinations) {
+                    delete destinations[searchCategory][randomDest.id]; // prevents redundancy
+                }
+            }
+            return randomDest;
         }
-        return returnDest;
-      }
     }
 
-    function deleteResult(name, results){ // helper to delete a chosen result, to prevent redundancy
-        for(let i = 0; i < results.length; i++){
-            if(name === results[i].name){
+    function deleteResult(name, results) { // helper to delete a chosen result, to prevent redundancy
+        for (let i = 0; i < results.length; i++) {
+            if (name === results[i].name) {
                 results.splice(i, 1);
                 break;
             }
         }
     }
 
-    function deleteRedundant(alreadySelected, results){ // deletes redundant destinations previously chosen from other categories
-        for(let i = 0; i < alreadySelected.length; i++){
-            if(alreadySelected[i]){
+    function deleteRedundant(alreadySelected, results) { // deletes redundant destinations previously chosen from other categories
+        for (let i = 0; i < alreadySelected.length; i++) {
+            if (alreadySelected[i]) {
                 deleteResult(alreadySelected[i], results);
             }
         }
     }
 
-    function fixRadius(radius){
+    function fixRadius(radius) {
         radius = radius * 1609.344; // convert radius from miles to meters
-        if(radius > 40000){ // yelp only accepts up to 40000 meters
+        if (radius > 40000) { // yelp only accepts up to 40000 meters
             radius = 40000;
-        } else if(radius < 0){
+        } else if (radius < 0) {
             radius = 0;
         }
         return Math.floor(radius); // yelp API only accepts integers for distance
@@ -197,37 +185,37 @@ module.exports = function Routes(app){
         };
     }
 
-    function retrieveFromRedis(cacheKey) {
-        return Observable.create(observer => {
-            redisClient.hgetall(cacheKey, function (err, obj) {
-                if (err) {
-                    console.log('retrieval error');
-                    observer.error(err);
-                } else {
-                    const results = [];
-                    if(obj) {
-                        console.log('Retrieved data?');
-                        for (let key in obj) {
-                            if (obj.hasOwnProperty(key)) {
-                                results.push(obj[key]);
-                            }
+    async function retrieveFromRedis(cacheKey) {
+        return new Promise((resolve, reject) => redisClient.hgetall(cacheKey, function (err, obj) {
+            if (err) {
+                console.log('retrieval error');
+                return reject('Retrieval error');
+            } else {
+                const results = [];
+                if (obj) {
+                    for (let key in obj) {
+                        if (obj.hasOwnProperty(key)) {
+                            results.push(JSON.parse(obj[key]));
                         }
-                    } else {
-                        console.log('No retrieval');
                     }
-                    observer.next(results);
+                } else {
+                    console.log('No retrieval');
                 }
-            });
-        });
+                return resolve(results);
+            }
+        }));
     }
 
-    function saveResultsToRedis(cacheKey, category, results) {
-        const secondsPerWeek = 60*60*24*70;
-        results.forEach((result) => {
-            redisClient.hset(cacheKey, result.id, JSON.stringify(cleanResult(result, category)));
-            redisClient.expire(cacheKey, secondsPerWeek);
+    async function saveResultsToRedis(cacheKey, category, results) {
+        return new Promise((resolve) => {
+            results = results.map((result) => cleanResult(result, category));
+            const secondsPerWeek = 60 * 60 * 24 * 70;
+            results.forEach((result) => {
+                redisClient.hset(cacheKey, result.id, JSON.stringify(result));
+                redisClient.expire(cacheKey, secondsPerWeek);
+            });
+            resolve(results);
         });
-        retrieveFromRedis(cacheKey);
     }
 
     function getCacheKey(queryData) {
@@ -235,14 +223,15 @@ module.exports = function Routes(app){
     }
 
     function cleanResult(result, category) {
-        if(result){
+        if (result) {
             result = {
-                loc: result.location.display_address.join(", ") || 'Varies',
+                id: result.id,
+                loc: result.location && result.location.display_address ? result.location.display_address.join(", ") : 'Varies',
                 name: result.name || "Unnamed",
                 image_url: result.image_url || "./assets/question-mark.jpg",
                 url: result.url || "N/A",
                 phone: result.display_phone || "N/A",
-                rating: getStars(result.stars),
+                rating: getStars(result.rating),
                 reviews: "Yelp reviews: " + (result.review_count ? result.review_count : "0"),
                 category: category,
                 price: result.price || '',
@@ -254,12 +243,12 @@ module.exports = function Routes(app){
         return result;
     }
 
-    function getStars(numStars){
+    function getStars(numStars) {
         if (!numStars) {
             numStars = 0;
         }
         let stars = [];
-        for(let i = 0; i < Math.round(numStars); i++){
+        for (let i = 0; i < Math.round(numStars); i++) {
             stars.push('*');
         }
         return stars;
@@ -268,4 +257,12 @@ module.exports = function Routes(app){
     function roundDownRadius(num) {
         return Math.floor(num / 10001);
     }
-};
+
+    async function yelpQuery(city, radius, queryCategory) {
+        return yelpClient.search({
+            location: city,
+            radius: radius,
+            categories: queryCategory
+        });
+    }
+}
