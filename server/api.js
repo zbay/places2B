@@ -55,59 +55,50 @@ module.exports = function Routes(app) {
             }).catch((err) => {
                 console.log(err);
                 res.sendStatus(500).json({error: "Failed Redis retrieval. Try again later!"});
-            })
+            });
         });
 
     });
 
-    app.post("/api/swap", function (req, res) {
+    app.post("/api/swap", async (req, res) => {
         const requestData = req.body;
-        yelpThrottle(() => {
-            yelpClient.search({
-                location: requestData.city,
-                radius: fixRadius(requestData.radius),
-                categories: requestData.category
-            }).then(response => {
-                let results = response.jsonBody.businesses;
-                deleteRedundant(requestData.otherDests, results); // delete redundant destinations from other categories
-                res.json(randomDestinationFromArray(results, requestData.category));
-            })
-                .catch((err) => {
-                    console.log(err);
-                    res.sendStatus(500).json({error: "The Yelp API messed up. Try again later!"});
-                });
-        });
+        const radius = fixRadius(requestData.radius);
+        if(requestData.category === 'none') {
+            res.json(getEmptyDestination());
+        } else {
+            const cacheKey = getCacheKey({
+                city: requestData.city,
+                radius: radius,
+                category: requestData.category
+            });
+            await retrieveFromRedis(cacheKey).then((results) => {
+                if (results && results.length > 0) {
+                    selectOneRandomResult(results, requestData.otherDestIDs, res);
+                } else {
+                    yelpThrottle(async () => {
+                        await yelpQuery(requestData.city, radius, requestData.category).then(async (response) => {
+                            await saveResultsToRedis(cacheKey, requestData.category, response.jsonBody.businesses).then((businesses) => {
+                                selectOneRandomResult(businesses, requestData.otherDestIDs, res);
+                            }).catch((err) => {
+                                console.log(err);
+                                res.sendStatus(500).json({error: "Failed to save results!"});
+                            });
+                        }).catch((err) => {
+                            console.log(err);
+                            res.sendStatus(500).json({error: "The Yelp API messed up. Try again later!"});
+                        })
+                    });
+                }
+            }).catch((err) => {
+                console.log(err);
+                res.sendStatus(500).json({error: "Failed Redis retrieval. Try again later!"});
+            });
+        }
     });
 
     app.all("*", (req, res, next) => { // front-end views
         res.sendFile(path.resolve("./public/dist/index.html"))
     });
-
-    function randomDestinationFromArray(results, category) {
-        if (results.length === 0) {
-            return getEmptyDestination(category);
-        } else {
-            const randomDest = results[Math.floor(Math.random() * results.length)];
-            return randomDest;
-        }
-    }
-
-    function deleteResult(name, results) { // helper to delete a chosen result, to prevent redundancy
-        for (let i = 0; i < results.length; i++) {
-            if (name === results[i].name) {
-                results.splice(i, 1);
-                break;
-            }
-        }
-    }
-
-    function deleteRedundant(alreadySelected, results) { // deletes redundant destinations previously chosen from other categories
-        for (let i = 0; i < alreadySelected.length; i++) {
-            if (alreadySelected[i]) {
-                deleteResult(alreadySelected[i], results);
-            }
-        }
-    }
 
     function fixRadius(radius) {
         radius = radius * 1609.344; // convert radius from miles to meters
@@ -223,6 +214,30 @@ module.exports = function Routes(app) {
         }
         if (randomDestinations.length >= numDestinations) {
             res.json({results: randomDestinations});
+        }
+    }
+
+    function selectOneRandomResult(results, otherDestIDs, res) {
+        if(!results.length) {
+            res.json(getEmptyDestination());
+        } else {
+            let randomDest;
+            for (let i = 0; i < maxRandomTries; i++) {
+                randomDest = results[Math.floor(Math.random() * results.length)];
+                for (let j = 0; j < otherDestIDs.length; j++){
+                    if(randomDest.id === otherDestIDs[j]) {
+                        randomDest = null;
+                        break;
+                    }
+                }
+                if (randomDest) {
+                    break;
+                }
+            }
+            if(!randomDest) {
+                randomDest = getEmptyDestination();
+            }
+            res.json(randomDest);
         }
     }
 

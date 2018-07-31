@@ -56,7 +56,7 @@ export class SearchService {
   swap(category: DestinationType, index: number): void {
     const lastQuery: SearchQuery = Object.assign({}, this._latestQuery);
     lastQuery.category = category;
-    lastQuery.otherDests = this.getNames(); // get the names from latest query names
+    lastQuery.otherDestIDs = this.getIDs(); // get the names from latest query names
     console.log(lastQuery);
     this._http.post(`${environment.apiEndpoint}/api/swap`, lastQuery)
       .pipe(first(), retry(2))
@@ -71,7 +71,7 @@ export class SearchService {
         });
   }
 
-  getNames(): string[] {
-    return this._latestSearchResults.value.map(result => result.name);
+  getIDs(): string[] {
+    return this._latestSearchResults.value.map(result => result.id);
   }
 }

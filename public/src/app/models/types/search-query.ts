@@ -10,5 +10,5 @@ export interface SearchQuery {
 
   // properties only used for swapping
   category?: DestinationType;
-  otherDests?: string[];
+  otherDestIDs?: string[];
 }

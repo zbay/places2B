@@ -1,4 +1,5 @@
 export interface DestinationResult {
+  id: string,
   category: string;
   image_url: string;
   loc: string;
