@@ -17,6 +17,8 @@ const utilities = require('./search-utilities.js');
 module.exports = function Routes(app) {
 
     app.post("/api/search", async function process(req, res) { // process search requests
+        console.log('searching');
+        console.log([process.env]);
         const requestData = req.body;
         const destinations = requestData.destinations;
 
@@ -64,6 +66,7 @@ module.exports = function Routes(app) {
     });
 
     app.post("/api/swap", async (req, res) => {
+        console.log('swapping');
         const requestData = req.body;
         const radius = utilities.fixRadius(requestData.radius);
         if(requestData.category === 'none') {

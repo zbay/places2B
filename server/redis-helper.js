@@ -6,6 +6,7 @@ const maxAllowableDistance = 40000; // filter out faraway businesses that includ
 
 module.exports = {
     retrieveFromRedis: async (cacheKey) => {
+        console.log('retrieving from redis');
         return new Promise((resolve, reject) => redisClient.hgetall(cacheKey, function (err, obj) {
             if (err) {
                 console.log('retrieval error');
@@ -25,6 +26,7 @@ module.exports = {
     },
 
     saveResultsToRedis: async (cacheKey, category, results) => {
+        console.log('Saving to Redis');
         return new Promise((resolve) => {
             results = results.map((result) => module.exports.cleanSearchResult(result, category))
                 .filter((result) => result.distance < maxAllowableDistance);
