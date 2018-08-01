@@ -2,6 +2,7 @@ const redis = require("redis"),
     redisClient = redis.createClient();
 
 const secondsPerWeek = 60 * 60 * 24 * 70;
+const maxAllowableDistance = 40000; // filter out faraway businesses that include the search area in their service area
 
 module.exports = {
     retrieveFromRedis: async (cacheKey) => {
@@ -25,12 +26,13 @@ module.exports = {
 
     saveResultsToRedis: async (cacheKey, category, results) => {
         return new Promise((resolve) => {
-            results = results.map((result) => module.exports.cleanSearchResult(result, category));
+            results = results.map((result) => module.exports.cleanSearchResult(result, category))
+                .filter((result) => result.distance < maxAllowableDistance);
             results.forEach((result) => {
                 redisClient.hset(cacheKey, result.id, JSON.stringify(result));
                 redisClient.expire(cacheKey, secondsPerWeek);
             });
-            resolve(results);
+            return resolve(results);
         });
     },
 
@@ -47,9 +49,10 @@ module.exports = {
                     reviews: "Yelp reviews: " + (result.review_count ? result.review_count : "0"),
                     category: category,
                     price: result.price || '',
+                    distance: result.distance || 0,
                     // the next two are unused but may be useful later
                     coordinates: result.coordinates,
-                    categories: result.coordinates
+                    categories: result.categories
                 };
             }
             return result;

@@ -38,6 +38,10 @@ export class SearchService {
     return query;
   }
 
+  clearResults() {
+    this._latestSearchResults.next([]);
+  }
+
   search(query: SearchQuery): void {
     this._isSearchPending.next(true);
     this._http.post(`${environment.apiEndpoint}/api/search`, SearchService.queryWithDestinationTypes(query))

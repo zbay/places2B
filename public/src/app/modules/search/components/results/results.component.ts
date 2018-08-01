@@ -49,6 +49,10 @@ export class ResultsComponent extends SubscribingComponent implements OnInit {
 
   }
 
+  ngOnDestroy() {
+    this._searchService.clearResults();
+  }
+
   triggerSwap(category: DestinationType, idx: number) {
     this._searchService.swap(category, idx);
   }
