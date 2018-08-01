@@ -1,5 +1,4 @@
-import { Component,
-         OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 
 import { DestinationResult } from '@models/types';
@@ -9,12 +8,12 @@ import { SubscribingComponent } from '@app/modules/shared/components/subscribing
 import { Animations } from '@models/animations';
 
 @Component({
-  animations: [Animations.fadeIn, Animations.fadeSwap],
+  animations: [Animations.fadeIn, Animations.scaleHorizAndFadeIn, Animations.scaleVertFadeSwap],
   selector: 'app-results',
   templateUrl: './results.component.html',
   styleUrls: ['./results.component.scss']
 })
-export class ResultsComponent extends SubscribingComponent implements OnInit {
+export class ResultsComponent extends SubscribingComponent implements OnInit, OnDestroy {
   searchResults: DestinationResult[] = [];
 
   constructor(private _searchService: SearchService) {

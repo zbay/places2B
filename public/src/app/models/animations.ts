@@ -19,7 +19,29 @@ export const Animations = {
       }))
     ])
   ]),
-  fadeSwap: trigger('fadeSwap', [
+  scaleHorizAndFadeIn: trigger('scaleHorizAndFadeIn', [
+    transition(':enter', [
+      style({
+        transform: 'scaleX(0)',
+        opacity: 0
+      }),
+      animate('300ms 300ms', style({
+        transform: 'scaleX(1)',
+        opacity: 1
+      }))
+    ]),
+    transition(':leave', [
+      style({
+        transform: 'scaleX(1)',
+        opacity: 1
+      }),
+      animate(300, style({
+        transform: 'scaleX(0)',
+        opacity: 0
+      }))
+    ])
+  ]),
+  scaleVertFadeSwap: trigger('scaleVertFadeSwap', [
     transition('* => beginSwap', [
       style({
         opacity: 1,
