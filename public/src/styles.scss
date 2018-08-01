@@ -155,8 +155,8 @@ mat-icon{
   align-items: center;
 }
 
-.fancy-text {
-  font-family: Lemon, sans-serif;
+.fancy-text, span.mat-checkbox-label {
+  font-family: Lemon, sans-serif !important;
 }
 
 mat-form-field.ng-invalid {

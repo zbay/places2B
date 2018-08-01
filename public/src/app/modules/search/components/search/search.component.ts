@@ -26,6 +26,7 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
   destinationTypes = DestinationTypes;
   fb = new FormBuilder();
   optionsGroup: FormGroup = this.fb.group({
+    filterByPrice: [false, Validators.required],
     minPrice: [1, Validators.required],
     maxPrice: [4, Validators.required]
   });
@@ -90,6 +91,18 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
           this.optionsGroup.controls.minPrice.setValue(maxPrice);
         }
       });
+
+    this.optionsGroup.get('filterByPrice').valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isFiltering) => {
+        if (!isFiltering) {
+          this.optionsGroup.controls.minPrice.disable();
+          this.optionsGroup.controls.maxPrice.disable();
+        } else {
+          this.optionsGroup.controls.minPrice.enable();
+          this.optionsGroup.controls.maxPrice.enable();
+        }
+      });
   }
 
   removeDestination() {
@@ -104,7 +117,9 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
     const searchQuery: SearchQuery = {
       city: '' + this.locationGroup.get('city').value,
       radius: parseInt(this.locationGroup.get('radius').value, 10),
-      price: SearchComponent.toPriceString(this.optionsGroup.get('minPrice').value, this.optionsGroup.get('maxPrice').value),
+      price: this.optionsGroup.get('filterByPrice').value ?
+        SearchComponent.toPriceString(this.optionsGroup.get('minPrice').value, this.optionsGroup.get('maxPrice').value)
+        : undefined,
       destinations: this.destinations.controls
         .map((dest: AbstractControl) => ({kind: '' + dest.value}))
     };

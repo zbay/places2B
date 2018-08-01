@@ -87,27 +87,33 @@
     <mat-step [stepControl]="optionsGroup">
       <ng-template matStepLabel="">Extra criteria (optional)</ng-template>
       <div [formGroup]="optionsGroup"
-           class="step-content margin-above"
-           fxLayout="row" fxLayoutAlign="space-around center">
-        <div>
-          <h4 class="fancy-text">Min price</h4>
-          <mat-slider min="0"
-                      max="4"
-                      step="1"
-                      showTicks="true"
-                      thumbLabel="false"
-                      formControlName="minPrice">
-          </mat-slider>
+           class="step-content margin-above">
+        <div fxLayout="row" fxLayoutAlign="center center">
+          <mat-checkbox formControlName="filterByPrice">Filter by price</mat-checkbox>
         </div>
-        <div>
-          <h4 class="fancy-text">Max price</h4>
-          <mat-slider min="0"
-                      max="4"
-                      step="1"
-                      showTicks="true"
-                      thumbLabel="false"
-                      formControlName="maxPrice">
-          </mat-slider>
+        <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-around center">
+          <div>
+            <h4 class="fancy-text">Min price</h4>
+            <mat-slider min="0"
+                        max="4"
+                        step="1"
+                        showTicks="true"
+                        thumbLabel="false"
+                        [disabled]="!filterByPrice"
+                        formControlName="minPrice">
+            </mat-slider>
+          </div>
+          <div>
+            <h4 class="fancy-text">Max price</h4>
+            <mat-slider min="0"
+                        max="4"
+                        step="1"
+                        showTicks="true"
+                        thumbLabel="false"
+                        [disabled]="!filterByPrice"
+                        formControlName="maxPrice">
+            </mat-slider>
+          </div>
         </div>
       </div>
       <br />
