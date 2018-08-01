@@ -18,9 +18,11 @@ export class SearchService {
   private _isSearchPending = new Subject<boolean>();
   private _latestSearchError = new BehaviorSubject<string>(null);
   private _latestSearchResults = new BehaviorSubject<DestinationResult[]>([]);
+  private _latestSwap = new Subject<any>();
   private _latestQuery: SearchQuery = null;
   isSearchPending = this._isSearchPending.asObservable();
   latestSearchError = this._latestSearchError.asObservable();
+  latestSwap = this._latestSwap.asObservable();
   latestSearchResults = this._latestSearchResults.asObservable();
 
   constructor(private _http: HttpClient) { }
@@ -57,14 +59,11 @@ export class SearchService {
     const lastQuery: SearchQuery = Object.assign({}, this._latestQuery);
     lastQuery.category = category;
     lastQuery.otherDestIDs = this.getIDs(); // get the names from latest query names
-    console.log(lastQuery);
+    // console.log(lastQuery);
     this._http.post(`${environment.apiEndpoint}/api/swap`, lastQuery)
       .pipe(first(), retry(1))
       .subscribe((destination: DestinationResult) => {
-        console.log(destination);
-        const results = this._latestSearchResults.value;
-        results[index] = destination;
-        this._latestSearchResults.next(results);
+        this._latestSwap.next({ result: destination, index: index});
       },
         err => {
           this._latestSearchError.next('Failed swap!');

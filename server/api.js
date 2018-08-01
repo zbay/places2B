@@ -40,7 +40,8 @@ module.exports = function Routes(app) {
                     utilities.selectRandomResultsForCategory(randomConfig);
                 } else {
                     yelpThrottle(async () => {
-                        await yelpQuery(requestData.city, radius, queryCategory, requestData.price).then(async (response) => {
+                        const yelpQueryConfig = {location: requestData.city, radius: radius, categories: queryCategory, price: requestData.price};
+                        await yelpQuery(yelpQueryConfig).then(async (response) => {
                             await redisHelper.saveResultsToRedis(cacheKey, queryCategory, response.jsonBody.businesses).then((businesses) => {
                                 const randomConfig = {results: businesses, randomDestinations, randomDestinationsSet, destinations, category: queryCategory, res};
                                 utilities.selectRandomResultsForCategory(randomConfig);
@@ -78,7 +79,8 @@ module.exports = function Routes(app) {
                     utilities.selectOneRandomResult(results, requestData.otherDestIDs, res);
                 } else {
                     yelpThrottle(async () => {
-                        await yelpQuery(requestData.city, radius, requestData.category, requestData.price).then(async (response) => {
+                        const yelpQueryConfig = {location: requestData.city, radius: radius, categories: requestData.category, price: requestData.price};
+                        await yelpQuery(yelpQueryConfig).then(async (response) => {
                             await redisHelper.saveResultsToRedis(cacheKey, requestData.category, response.jsonBody.businesses).then((businesses) => {
                                 utilities.selectOneRandomResult(businesses, requestData.otherDestIDs, res);
                             }).catch((err) => {
@@ -102,13 +104,13 @@ module.exports = function Routes(app) {
         res.sendFile(path.resolve("./public/dist/index.html"))
     });
 
-    async function yelpQuery(city, radius, queryCategory, price) {
+    async function yelpQuery(queryConfig) {
         return yelpClient.search({
-            categories: queryCategory,
+            categories: queryConfig.categories,
             limit: 50,
-            location: city,
-            price: price,
-            radius: radius,
+            location: queryConfig.location,
+            price: queryConfig.price,
+            radius: queryConfig.radius,
         });
     }
 };

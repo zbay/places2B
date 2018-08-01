@@ -8,4 +8,7 @@ export interface DestinationResult {
   phone: string;
   rating: string[];
   reviews: string;
+
+  // UI-only property to facilitate swapping animation
+  swapStatus?: string;
 }
