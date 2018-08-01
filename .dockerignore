@@ -1,0 +1,7 @@
+*/node_modules
+*/public/dist
+*/public/e2e
+*/*/node_modules
+*.gitignore
+*.dockerignore
+README.md

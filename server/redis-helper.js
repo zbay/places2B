@@ -1,5 +1,5 @@
 const redis = require("redis"),
-    redisClient = redis.createClient();
+    redisClient = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOSTNAME);
 
 const secondsPerWeek = 60 * 60 * 24 * 70;
 const maxAllowableDistance = 40000; // filter out faraway businesses that include the search area in their service area
