@@ -1,0 +1,50 @@
+@import '../p2b-theme';
+
+mat-step {
+  border: 1px solid white !important;
+}
+
+mat-form-field.ng-invalid {
+  margin-bottom: 0.5em;
+}
+
+span.mat-checkbox-label {
+  font-family: $fancy-font, sans-serif !important;
+}
+
+mat-icon{
+  font-family: 'Material Icons', sans-serif !important;
+}
+
+.mat-icon-button .mat-button-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+mat-expansion-panel {
+  background: rgba(0,0,0, 0.6) !important;
+}
+
+.mat-expansion-panel-content {
+  background: rgba(0,0,0, 0.0);
+}
+.mat-expansion-panel-header {
+  background: rgba(0,0,0, 0.8);
+}
+
+mat-vertical-stepper {
+  background: rgba(0,0,0,0) !important;
+}
+
+mat-form-field {
+  font-size: 1.5em !important;
+}
+
+.mat-form-field-label-wrapper {
+  font-family: $fancy-font, sans-serif;
+}
+
+.ng-valid .mat-form-field-label {
+  color: $accent !important;
+}

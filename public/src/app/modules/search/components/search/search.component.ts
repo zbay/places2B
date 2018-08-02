@@ -27,8 +27,8 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
   fb = new FormBuilder();
   optionsGroup: FormGroup = this.fb.group({
     filterByPrice: [false, Validators.required],
-    minPrice: [1, Validators.required],
-    maxPrice: [4, Validators.required]
+    minPrice: [{value: 1, disabled: true}, Validators.required],
+    maxPrice: [{value: 4, disabled: true}, Validators.required]
   });
   locationGroup: FormGroup = this.fb.group({
     city: ['Alexandria, VA', Validators.required],
@@ -78,7 +78,7 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
       .subscribe((minPrice) => {
         if (minPrice === 0) {
           this.optionsGroup.controls.minPrice.setValue(1);
-        } else if(minPrice > this.optionsGroup.get('maxPrice').value) {
+        } else if (minPrice > this.optionsGroup.get('maxPrice').value) {
           this.optionsGroup.controls.maxPrice.setValue(minPrice);
         }
       });
@@ -87,7 +87,7 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
       .subscribe((maxPrice) => {
         if (maxPrice === 0) {
           this.optionsGroup.controls.maxPrice.setValue(1);
-        } else if(maxPrice < this.optionsGroup.get('minPrice').value) {
+        } else if (maxPrice < this.optionsGroup.get('minPrice').value) {
           this.optionsGroup.controls.minPrice.setValue(maxPrice);
         }
       });

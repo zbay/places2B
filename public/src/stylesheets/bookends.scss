@@ -1,0 +1,68 @@
+@import '../p2b-theme';
+
+.bookend {
+  background-color:$bookend-background;
+  border: 1.25em double $bookend-border;
+  border-radius: 0.75em;
+  color: $bookend-text;
+  font-family: $fancy-font, sans-serif;
+  text-align:center;
+  padding:1.8em;
+  text-shadow: 3px 3px $link-primary;
+  width:100%;
+  box-sizing: border-box;
+
+  h1, h2 {
+    text-shadow: 3px 3px $link-primary;
+  }
+
+  h1 {
+    font-size:3em;
+  }
+
+  h2 {
+    font-size: 1.8em;
+  }
+
+  @media(max-width: 600px) {
+    h1{
+      font-size: 1.6em;
+    }
+    h2 {
+      font-size: 1.1em;
+    }
+  }
+}
+
+.jumbotron {
+  margin-bottom: 1em;
+}
+
+footer{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  align-self: center;
+  margin-top: 1em;
+
+  .vert-center-top{
+    align-self:flex-start;
+  }
+  .vert-center-bottom{
+    align-self:flex-end;
+  }
+}
+
+#iconRow img {
+  height: 3em;
+  min-width: 3em;
+  max-width: 6em;
+}
+
+.wrapper {
+  min-height:100vh;
+  flex-direction:column;
+  display:flex;
+}

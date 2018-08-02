@@ -1,4 +1,6 @@
-@import './p2b-theme';
+@import 'p2b-theme';
+@import 'stylesheets/material_modifications';
+@import 'stylesheets/bookends';
 
 // icons? music_video, local_dining, local_bar, local_cafe, local_movies, fastfood, terrain, directions_bike
 
@@ -26,62 +28,6 @@ button{
   background-color: $primary;
 }
 
-
-.bookend {
-  background-color:$bookend-background;
-  border: 1.25em double $bookend-border;
-  border-radius: 0.75em;
-  color: $bookend-text;
-  font-family: Lemon, sans-serif;
-  text-align:center;
-  padding:1.8em;
-  text-shadow: 3px 3px $link-primary;
-  width:100%;
-  box-sizing: border-box;
-
-  h1, h2 {
-    text-shadow: 3px 3px $link-primary;
-  }
-
-  h1 {
-    font-size:3em;
-  }
-
-  h2 {
-    font-size: 1.8em;
-  }
-
-  @media(max-width: 600px) {
-    h1{
-      font-size: 1.6em;
-    }
-    h2 {
-      font-size: 1.1em;
-    }
-  }
-}
-
-.jumbotron {
-  margin-bottom: 1em;
-}
-
-footer{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  align-self: center;
-  margin-top: 1em;
-
-  .vert-center-top{
-    align-self:flex-start;
-  }
-  .vert-center-bottom{
-    align-self:flex-end;
-  }
-}
-
 a:link {
   color: $link-primary;
 }
@@ -96,71 +42,18 @@ a:active {
   color: $link-active;
 }
 
-#iconRow img {
-  height: 3em;
-  min-width: 3em;
-  max-width: 6em;
-}
-
-.wrapper {
-  min-height:100vh;
-  flex-direction:column;
-  display:flex;
-}
-
-.mat-form-field-label-wrapper {
-  font-family: Lemon, sans-serif;
-}
-
-.ng-valid .mat-form-field-label {
-  color: $accent !important;
-}
-
 .p2b-solid-background {
   background-color: $background !important;
-}
-
-mat-expansion-panel {
-  background: rgba(0,0,0, 0.6) !important;
-}
-
-.mat-expansion-panel-content {
-  background: rgba(0,0,0, 0.0);
-}
-.mat-expansion-panel-header {
-  background: rgba(0,0,0, 0.8);
-}
-
-mat-vertical-stepper {
-  background: rgba(0,0,0,0) !important;
-}
-
-mat-form-field {
-  font-size: 1.5em !important;
 }
 
 .p2b-form-button {
   color: $background;
   background-color: $bookend-background;
-  font-family: Lemon, sans-serif;
+  font-family: $fancy-font, sans-serif;
 }
 
-mat-icon{
-  font-family: 'Material Icons', sans-serif !important;
-}
-
-.mat-icon-button .mat-button-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.fancy-text, span.mat-checkbox-label {
-  font-family: Lemon, sans-serif !important;
-}
-
-mat-form-field.ng-invalid {
-  margin-bottom: 0.5em;
+.fancy-text {
+  font-family: $fancy-font, sans-serif !important;
 }
 
 .error {
@@ -189,8 +82,4 @@ mat-form-field.ng-invalid {
       white 10px,
       white 20px
   );
-}
-
-mat-step {
-  border: 1px solid white !important;
 }
