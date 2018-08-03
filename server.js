@@ -7,7 +7,7 @@ const morgan = require('morgan');
 app.use(morgan('combined'));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, './public/dist')));
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   if ('OPTIONS' === req.method) {
@@ -19,6 +19,6 @@ app.use(function(req, res, next) {
 const api = require('./api/api.js');
 api(app);
 
-app.listen(7654, function(){
+app.listen(7654, () => {
     console.log("listening on port 7654");
 });

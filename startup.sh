@@ -7,6 +7,7 @@ export NVM_DIR="$HOME/.nvm"
 nvm install 8.9.4
 
 sudo amazon-linux-extras install redis4.0
+redis-server &
 sudo amazon-linux-extras install nginx1.12
 
 sudo yum install git
@@ -33,6 +34,7 @@ npm install pm2 -g
        proxy_set_header Host $host;
        proxy_cache_bypass $http_upgrade;
    }
+   sudo service nginx restart
    cd places2B
-   pm2 start node server
+   pm2 start server.js
  pm2 startup && pm2 save '
