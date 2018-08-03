@@ -6,7 +6,7 @@ import { AboutComponent } from '@app/about/about.component';
 const routes: Routes = [
   {path: '', redirectTo: 'search', pathMatch: 'full'},
   {path: 'about', pathMatch: 'full', component: AboutComponent},
-  {path: 'search', loadChildren: '@app/modules/search/search.module#SearchModule'}
+  // {path: 'search', loadChildren: '@app/modules/search/search.module#SearchModule'}
 ];
 
 @NgModule({

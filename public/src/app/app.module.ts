@@ -7,6 +7,7 @@ import { AppRoutingModule } from '@app/app-routing.module';
 import { AppComponent } from '@app/app.component';
 import { AboutComponent } from '@app/about/about.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SearchModule } from '@app/modules/search/search.module';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     BrowserAnimationsModule,
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    SearchModule
   ],
   bootstrap: [AppComponent],
   providers: [{ provide: HAMMER_GESTURE_CONFIG, useClass: GestureConfig }]
