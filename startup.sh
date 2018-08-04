@@ -1,3 +1,5 @@
+#!/bin/bash -ex
+
 sudo yum update
 
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
@@ -24,8 +26,7 @@ cd ../../
 npm install pm2 -g
 
 : ' todo: create .env file
- run node server.js and redis-server with pm2
- edit server of /etc/nginx/nginx.conf
+ edit server: sudo vim /etc/nginx/nginx.conf
    location / {
        proxy_pass http://127.0.0.1:7654;
        proxy_http_version 1.1;

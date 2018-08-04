@@ -1,4 +1,4 @@
 export const environment = {
-  apiEndpoint: 'http://localhost:7654',
+  apiEndpoint: 'http://places2b.zbay.xyz:7654',
   production: true
 };
