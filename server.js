@@ -17,6 +17,6 @@ app.use((req, res, next) => {
 const api = require('./api/api.js');
 api(app);
 
-app.listen(7654, '0.0.0.0', () => {
+app.listen(7654, () => {
     console.log("listening on port 7654");
 });
