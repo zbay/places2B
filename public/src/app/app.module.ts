@@ -17,9 +17,9 @@ import { SearchModule } from '@app/modules/search/search.module';
   imports: [
     BrowserAnimationsModule,
     BrowserModule,
-    AppRoutingModule,
     HttpClientModule,
-    SearchModule
+    SearchModule,
+    AppRoutingModule
   ],
   bootstrap: [AppComponent],
   providers: [{ provide: HAMMER_GESTURE_CONFIG, useClass: GestureConfig }]

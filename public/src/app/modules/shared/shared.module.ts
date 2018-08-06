@@ -7,11 +7,13 @@ import { SubscribingComponent } from '@app/modules/shared/components/subscribing
 
 import { MaterialModule } from '@app/modules/material/material.module';
 import { ErrorDialogComponent } from './components/error-dialog/error-dialog/error-dialog.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 @NgModule({
   declarations: [
     SubscribingComponent,
-    ErrorDialogComponent
+    ErrorDialogComponent,
+    NotFoundComponent
   ],
   imports: [
     CommonModule,
