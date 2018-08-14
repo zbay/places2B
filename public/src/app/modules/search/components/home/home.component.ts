@@ -58,6 +58,3 @@ export class HomeComponent extends SubscribingComponent implements OnInit {
   }
 
 }
-
-// Md+: row. Equal height
-// Sm-: Column. Equal width

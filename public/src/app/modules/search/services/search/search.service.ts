@@ -27,7 +27,7 @@ export class SearchService {
 
   constructor(private _http: HttpClient) { }
 
-  private static queryWithDestinationTypes(query: SearchQuery) {
+  static queryWithDestinationTypes(query: SearchQuery) {
     const queryTypes = [];
     for (let i = 0; i < query.destinations.length; i++) {
         if (queryTypes.indexOf(query.destinations[i].kind) === -1) {
@@ -38,15 +38,21 @@ export class SearchService {
     return query;
   }
 
+  static getIDs(results: DestinationResult[]): string[] {
+    return results.map(result => result.id);
+  }
+
   clearResults() {
     this._latestSearchResults.next([]);
   }
 
   search(query: SearchQuery): void {
+    console.log('searching...');
     this._isSearchPending.next(true);
     this._http.post(`${environment.apiEndpoint}/api/search`, SearchService.queryWithDestinationTypes(query))
       .pipe(first(), retry(1))
       .subscribe((data: any) => {
+        console.log('results: ' + data);
         this._latestQuery = query;
         if (data.results) {
           this._latestSearchResults.next(data.results);
@@ -62,7 +68,7 @@ export class SearchService {
   swap(category: DestinationType, index: number): void {
     const lastQuery: SearchQuery = Object.assign({}, this._latestQuery);
     lastQuery.category = category;
-    lastQuery.otherDestIDs = this.getIDs(); // get the names from latest query names
+    lastQuery.otherDestIDs = SearchService.getIDs(this._latestSearchResults.value); // get the names from latest query names
     // console.log(lastQuery);
     this._http.post(`${environment.apiEndpoint}/api/swap`, lastQuery)
       .pipe(first(), retry(1))
@@ -72,9 +78,5 @@ export class SearchService {
         err => {
           this._latestSearchError.next('Failed swap!');
         });
-  }
-
-  getIDs(): string[] {
-    return this._latestSearchResults.value.map(result => result.id);
   }
 }
