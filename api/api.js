@@ -49,17 +49,17 @@ module.exports = function Routes(app) {
                                 utilities.selectRandomResultsForCategory(randomConfig);
                             }).catch((err) => {
                                 console.log(err);
-                                res.sendStatus(500).json({error: "Failed to save results to cache!"});
+                                return res.sendStatus(500).json({error: "Failed to save results to cache!"});
                             });
                         }).catch((err) => {
                             console.log(err);
-                            res.sendStatus(500).json({error: "The Yelp API messed up. Try again later!"});
+                            return res.sendStatus(500).json({error: "The Yelp API messed up. Try again later!"});
                         })
                     });
                 }
             }).catch((err) => {
                 console.log(err);
-                res.sendStatus(500).json({error: "Failed cache retrieval. Try again later!"});
+                return res.sendStatus(500).json({error: "Failed cache retrieval. Try again later!"});
             });
         });
 
@@ -70,7 +70,7 @@ module.exports = function Routes(app) {
         const requestData = req.body;
         const radius = utilities.fixRadius(requestData.radius);
         if(requestData.category === 'none') {
-            res.json(utilities.getEmptyDestination());
+            return res.json(utilities.getEmptyDestination());
         } else {
             const cacheKey = utilities.getCacheKey({
                 city: requestData.city,
@@ -88,23 +88,23 @@ module.exports = function Routes(app) {
                                 utilities.selectOneRandomResult(businesses, requestData.otherDestIDs, res);
                             }).catch((err) => {
                                 console.log(err);
-                                res.sendStatus(500).json({error: "Failed to save results!"});
+                                return res.sendStatus(500).json({error: "Failed to save results!"});
                             });
                         }).catch((err) => {
                             console.log(err);
-                            res.sendStatus(500).json({error: "The Yelp API messed up. Try again later!"});
+                            return res.sendStatus(500).json({error: "The Yelp API messed up. Try again later!"});
                         })
                     });
                 }
             }).catch((err) => {
                 console.log(err);
-                res.sendStatus(500).json({error: "Failed Redis retrieval. Try again later!"});
+                return res.sendStatus(500).json({error: "Failed Redis retrieval. Try again later!"});
             });
         }
     });
 
     app.all("*", (req, res) => { // front-end code
-        res.sendFile(path.resolve("./public/dist/index.html"))
+        return res.sendFile(path.resolve("./public/dist/index.html"))
     });
 
     async function yelpQuery(queryConfig) {
