@@ -1,6 +1,7 @@
 import { Component,
          OnDestroy } from '@angular/core';
-import { Subject }   from 'rxjs';
+
+import { Subject } from 'rxjs';
 
 // Extending this component facilitates auto-unsubscribe
 @Component({

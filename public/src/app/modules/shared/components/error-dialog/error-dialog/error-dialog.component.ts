@@ -10,7 +10,7 @@ export class ErrorDialogComponent implements OnInit {
   message: string;
 
   constructor(
-    private dialogRef: MatDialogRef<ErrorDialogComponent>,
+    public dialogRef: MatDialogRef<ErrorDialogComponent>,
     @Inject(MAT_DIALOG_DATA) data) {
       this.message = data.message;
   }
