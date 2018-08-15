@@ -1,12 +1,13 @@
-import { inject, TestBed } from '@angular/core/testing';
-
-import { SearchService } from './search.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { HttpClientModule } from '@angular/common/http';
-import { DestinationResult, SearchQuery } from '@models/types';
-import { environment } from '@env/environment';
+import { inject, TestBed } from '@angular/core/testing';
+
 import { skip } from 'rxjs/operators';
+
+import { DestinationResult, SearchQuery } from '@models/types';
 import { DestinationType } from '@models/enums';
+import { environment } from '@env/environment';
+import { SearchService } from './search.service';
 
 describe('SearchService', () => {
   const searchUrl = `${environment.apiEndpoint}/api/search`;
