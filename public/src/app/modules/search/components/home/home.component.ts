@@ -23,13 +23,13 @@ export class HomeComponent extends SubscribingComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._searchService.isSearchPending
+    this._searchService.isSearchPending$
       .pipe(takeUntil(this.destroy$))
       .subscribe((changedLoadingStatus: boolean) => {
         this.isLoading = changedLoadingStatus;
       });
 
-    this._searchService.latestSearchError
+    this._searchService.latestSearchError$
       .pipe(takeUntil(this.destroy$))
       .subscribe((error: string) => {
         if (error) {

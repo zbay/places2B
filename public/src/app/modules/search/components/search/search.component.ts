@@ -65,7 +65,7 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
    }
 
   ngOnInit() {
-    this._searchService.latestSearchError
+    this._searchService.latestSearchError$
       .pipe(takeUntil(this.destroy$))
       .subscribe((err: string) => {
         this.isSearchOpen = true;

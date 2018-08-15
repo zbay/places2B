@@ -34,13 +34,13 @@ export class ResultsComponent extends SubscribingComponent implements OnInit, On
 
   ngOnInit() {
 
-    this._searchService.latestSearchResults
+    this._searchService.latestSearchResults$
       .pipe(takeUntil(this.destroy$))
       .subscribe(results => {
         this.searchResults = results;
       });
 
-    this._searchService.latestSwap
+    this._searchService.latestSwap$
       .pipe(takeUntil(this.destroy$))
       .subscribe((swapEvent: { index: number, result: DestinationResult}) => {
         this.slowSwap(this.searchResults[swapEvent.index], swapEvent.result);

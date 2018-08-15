@@ -15,15 +15,17 @@ import { DestinationType } from '@models/enums';
 })
 export class SearchService {
 
+  // some of these are public for testing purposes
   private _isSearchPending = new Subject<boolean>();
   private _latestSearchError = new BehaviorSubject<string>(null);
-  private _latestSearchResults = new BehaviorSubject<DestinationResult[]>([]);
+  _latestSearchResults = new BehaviorSubject<DestinationResult[]>([]);
   private _latestSwap = new Subject<any>();
-  private _latestQuery: SearchQuery = null;
-  isSearchPending = this._isSearchPending.asObservable();
-  latestSearchError = this._latestSearchError.asObservable();
-  latestSwap = this._latestSwap.asObservable();
-  latestSearchResults = this._latestSearchResults.asObservable();
+  _latestQuery: SearchQuery = null;
+
+  isSearchPending$ = this._isSearchPending.asObservable();
+  latestSearchError$ = this._latestSearchError.asObservable();
+  latestSwap$ = this._latestSwap.asObservable();
+  latestSearchResults$ = this._latestSearchResults.asObservable();
 
   constructor(private _http: HttpClient) { }
 
