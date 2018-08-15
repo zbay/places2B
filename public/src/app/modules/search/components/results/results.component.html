@@ -2,7 +2,7 @@
   <h3>Here's a plan!</h3>
   <ol id="resultsList">
       <li *ngFor="let destination of searchResults; let idx = index" class="result-box" [@scaleHorizAndFadeIn]>
-          <div [@scaleVertFadeSwap]="destination.swapStatus || 'pre'">
+          <div [@scaleVertFadeSwap]="destination.swapStatus || 'showing'">
             <div class="restaurant-data">
               <a href="{{destination.url}}" class="title">{{destination.name || "No result! Try again?"}}</a>
               <br />

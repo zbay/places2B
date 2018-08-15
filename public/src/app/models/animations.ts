@@ -1,4 +1,4 @@
-import { animate, style, transition, trigger } from '@angular/animations';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 export const Animations = {
   fadeIn: trigger('fadeIn', [
@@ -42,25 +42,15 @@ export const Animations = {
     ])
   ]),
   scaleVertFadeSwap: trigger('scaleVertFadeSwap', [
-    transition('* => beginSwap', [
-      style({
-        opacity: 1,
-        transform: 'scaleY(1)'
-      }),
-      animate(300, style({
-        opacity: 0,
-        transform: 'scaleY(0)'
-      }))
-    ]),
-    transition('* => finishSwap', [
-      style({
-        opacity: 0,
-        transform: 'scaleY(0)'
-      }),
-      animate(300, style({
-        opacity: 1,
-        transform: 'scaleY(1)'
-      }))
-    ])
+    state('showing', style({
+      opacity: 1,
+      transform: 'scaleY(1)'
+    })),
+    state('hidden',   style({
+      opacity: 0,
+      transform: 'scaleY(0)'
+    })),
+    transition('showing => hidden', animate('300ms ease-in')),
+    transition('hidden => showing', animate('300ms ease-out'))
   ])
 };

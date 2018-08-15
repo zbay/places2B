@@ -21,14 +21,14 @@ export class ResultsComponent extends SubscribingComponent implements OnInit, On
   }
 
   private slowSwap(oldResult: DestinationResult, newResult: DestinationResult): void {
-    oldResult.swapStatus = 'beginSwap';
+    oldResult.swapStatus = 'hidden';
     setTimeout(() => {
       for (const key in oldResult) {
         if (oldResult.hasOwnProperty(key) && key !== 'swapStatus') {
           oldResult[key] = newResult[key];
         }
       }
-      oldResult.swapStatus = 'finishSwap';
+      setTimeout(() => { oldResult.swapStatus = 'showing'; }, 300);
     }, 300);
   }
 
