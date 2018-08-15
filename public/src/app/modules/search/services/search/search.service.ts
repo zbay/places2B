@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 import { BehaviorSubject,
          Subject } from 'rxjs';
-import { first, retry } from 'rxjs/operators';
+import { first } from 'rxjs/operators';
 
 import { environment } from '@env/environment';
 import { DestinationResult,
@@ -44,6 +44,7 @@ export class SearchService {
 
   clearResults() {
     this._latestSearchResults.next([]);
+    this._latestSearchError.next(null);
   }
 
   search(query: SearchQuery): void {
@@ -67,7 +68,6 @@ export class SearchService {
     const lastQuery: SearchQuery = Object.assign({}, this._latestQuery);
     lastQuery.category = category;
     lastQuery.otherDestIDs = SearchService.getIDs(this._latestSearchResults.value); // get the names from latest query names
-    // console.log(lastQuery);
     this._http.post(`${environment.apiEndpoint}/api/swap`, lastQuery)
       .pipe(first())
       .subscribe((destination: DestinationResult) => {
