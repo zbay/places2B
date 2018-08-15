@@ -20,7 +20,7 @@ export class ResultsComponent extends SubscribingComponent implements OnInit, On
     super();
   }
 
-  private slowSwap(oldResult: DestinationResult, newResult: DestinationResult): void {
+  static slowSwap(oldResult: DestinationResult, newResult: DestinationResult): void {
     oldResult.swapStatus = 'hidden';
     setTimeout(() => {
       for (const key in oldResult) {
@@ -43,7 +43,7 @@ export class ResultsComponent extends SubscribingComponent implements OnInit, On
     this._searchService.latestSwap$
       .pipe(takeUntil(this.destroy$))
       .subscribe((swapEvent: SwapEvent) => {
-        this.slowSwap(this.searchResults[swapEvent.index], swapEvent.result);
+        ResultsComponent.slowSwap(this.searchResults[swapEvent.index], swapEvent.result);
       });
 
   }

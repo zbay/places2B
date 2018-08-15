@@ -1,4 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { DebugElement } from '@angular/core';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+
 import { of } from 'rxjs';
 
 
@@ -7,11 +10,14 @@ import { MaterialModule } from '@app/modules/material/material.module';
 import { SearchService } from '@app/modules/search/services/search/search.service';
 import { DestinationType } from '@models/enums';
 import { DestinationResult } from '@models/types';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('ResultsComponent', () => {
   let component: ResultsComponent;
   let fixture: ComponentFixture<ResultsComponent>;
+  let searchService;
+  let swapSpy;
+  let debugElement: DebugElement;
+
   const destinationResults: DestinationResult[] = [{
       id: '1',
       category: 'restaurants',
@@ -55,9 +61,20 @@ describe('ResultsComponent', () => {
     fixture = TestBed.createComponent(ResultsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+
+    debugElement = fixture.debugElement;
+    searchService = debugElement.injector.get(SearchService);
+    swapSpy = spyOn(searchService, 'swap').and.callThrough();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  describe('triggerSwap', () => {
+    it('should trigger swap', () => {
+      component.triggerSwap(DestinationType.Nightlife, 1);
+      expect(swapSpy).toHaveBeenCalled();
+    });
   });
 });
