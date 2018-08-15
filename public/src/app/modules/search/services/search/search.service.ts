@@ -47,19 +47,17 @@ export class SearchService {
   }
 
   search(query: SearchQuery): void {
-    console.log('searching...');
     this._isSearchPending.next(true);
     this._http.post(`${environment.apiEndpoint}/api/search`, SearchService.queryWithDestinationTypes(query))
-      .pipe(first(), retry(1))
+      .pipe(first())
       .subscribe((data: any) => {
-        console.log('results: ' + data);
         this._latestQuery = query;
         if (data.results) {
           this._latestSearchResults.next(data.results);
         }
       },
       err => {
-        console.log(err);
+        console.log(err.toString());
         this._latestSearchError.next('Failed search!');
       },
       () => this._isSearchPending.next(false));
@@ -71,7 +69,7 @@ export class SearchService {
     lastQuery.otherDestIDs = SearchService.getIDs(this._latestSearchResults.value); // get the names from latest query names
     // console.log(lastQuery);
     this._http.post(`${environment.apiEndpoint}/api/swap`, lastQuery)
-      .pipe(first(), retry(1))
+      .pipe(first())
       .subscribe((destination: DestinationResult) => {
         this._latestSwap.next({ result: destination, index: index});
       },

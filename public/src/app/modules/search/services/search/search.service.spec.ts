@@ -5,7 +5,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { HttpClientModule } from '@angular/common/http';
 import { DestinationResult, SearchQuery } from '@models/types';
 import { environment } from '@env/environment';
-import { skip } from 'rxjs/operators';
+import { filter, skip } from 'rxjs/operators';
 
 describe('SearchService', () => {
   const searchUrl = `${environment.apiEndpoint}/api/search`;
@@ -26,14 +26,13 @@ describe('SearchService', () => {
     expect(service).toBeTruthy();
   }));
 
-  it('should retrieve search results', (done: DoneFn) => { inject([SearchService, HttpTestingController],
-    (service: SearchService, httpMock: HttpTestingController) => {
-      const searchQuery: SearchQuery = { city: 'Testburg, TN',
-        radius: 25,
-        price: '1,2,3',
-        destinations: [{ kind: 'restaurants' }, { kind: 'nightlife' }]
-      };
-      const destinationResults: { results: DestinationResult[] } = { results: [{
+  describe('search', () => {
+    const searchQuery: SearchQuery = { city: 'Testburg, TN',
+      radius: 25,
+      price: '1,2,3',
+      destinations: [{ kind: 'restaurants' }, { kind: 'nightlife' }]
+    };
+    const destinationResults: { results: DestinationResult[] } = { results: [{
         id: '1',
         category: 'restaurants',
         image_url: 'https://www.image.com/img.jpg',
@@ -45,20 +44,41 @@ describe('SearchService', () => {
         reviews: '1243'
       }]};
 
-      // skip the first result, because it's a BehaviorSubject
-      service.latestSearchResults.pipe(skip(1)).subscribe((queries) => {
-        console.log(queries);
-        expect(queries).toEqual(destinationResults.results);
-        done();
-      });
+    it('should retrieve search results', (done: DoneFn) => { inject([SearchService, HttpTestingController],
+      (service: SearchService, httpMock: HttpTestingController) => {
+        // skip the first result, because it's a BehaviorSubject
+        service.latestSearchResults
+          .pipe(
+            skip(1)
+          )
+          .subscribe((queries) => {
+            expect(queries).toEqual(destinationResults.results);
+            done();
+          });
 
-      service.search(searchQuery);
+        service.search(searchQuery);
 
-      const req = httpMock.expectOne(searchUrl);
-      console.log(req.request.body);
-      expect(req.request.method).toEqual('POST');
-      expect(req.request.body).toEqual(searchQuery);
-      req.flush(destinationResults);
-    })();
+        const req = httpMock.expectOne(searchUrl);
+        expect(req.request.method).toEqual('POST');
+        expect(req.request.body).toEqual(searchQuery);
+        req.flush(destinationResults);
+      })();
+    });
+
+    it('should handle errors', (done: DoneFn) => { inject([SearchService, HttpTestingController],
+      (service: SearchService, httpMock: HttpTestingController) => {
+        // skip the first result, because it's a BehaviorSubject
+        service.latestSearchError
+          .pipe(skip(1))
+          .subscribe((err) => {
+            expect(err).toBeTruthy();
+            done();
+          });
+
+        service.search(searchQuery);
+        const req = httpMock.expectOne(searchUrl);
+        req.error(new ErrorEvent('FAILED SEARCH'));
+      })();
+    });
   });
 });
