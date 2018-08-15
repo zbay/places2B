@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 
-import { DestinationResult } from '@models/types';
+import { Animations } from '@models/animations';
+import { DestinationResult, SwapEvent } from '@models/types';
 import { DestinationType } from '@models/enums';
 import { SearchService } from '@app/modules/search/services/search/search.service';
 import { SubscribingComponent } from '@app/modules/shared/components/subscribing/subscribing.component';
-import { Animations } from '@models/animations';
 
 @Component({
   animations: [Animations.fadeIn, Animations.scaleHorizAndFadeIn, Animations.scaleVertFadeSwap],
@@ -42,7 +42,7 @@ export class ResultsComponent extends SubscribingComponent implements OnInit, On
 
     this._searchService.latestSwap$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((swapEvent: { index: number, result: DestinationResult}) => {
+      .subscribe((swapEvent: SwapEvent) => {
         this.slowSwap(this.searchResults[swapEvent.index], swapEvent.result);
       });
 

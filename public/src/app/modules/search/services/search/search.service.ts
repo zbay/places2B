@@ -1,13 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject,
-         Subject } from 'rxjs';
+import {
+  BehaviorSubject, Observable,
+  Subject
+} from 'rxjs';
 import { first } from 'rxjs/operators';
 
 import { environment } from '@env/environment';
-import { DestinationResult,
-         SearchQuery } from '@models/types';
+import {
+  DestinationResult,
+  SearchQuery, SwapEvent
+} from '@models/types';
 import { DestinationType } from '@models/enums';
 
 @Injectable({
@@ -22,10 +26,10 @@ export class SearchService {
   private _latestSwap = new Subject<any>();
   _latestQuery: SearchQuery = null;
 
-  isSearchPending$ = this._isSearchPending.asObservable();
-  latestSearchError$ = this._latestSearchError.asObservable();
-  latestSwap$ = this._latestSwap.asObservable();
-  latestSearchResults$ = this._latestSearchResults.asObservable();
+  isSearchPending$: Observable<boolean> = this._isSearchPending.asObservable();
+  latestSearchError$: Observable<string> = this._latestSearchError.asObservable();
+  latestSwap$: Observable<SwapEvent> = this._latestSwap.asObservable();
+  latestSearchResults$: Observable<DestinationResult[]> = this._latestSearchResults.asObservable();
 
   constructor(private _http: HttpClient) { }
 
@@ -44,7 +48,7 @@ export class SearchService {
     return results.map(result => result.id);
   }
 
-  clearResults() {
+  clearResults(): void {
     this._latestSearchResults.next([]);
     this._latestSearchError.next(null);
   }
