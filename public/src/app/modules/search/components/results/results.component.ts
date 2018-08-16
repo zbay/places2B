@@ -2,8 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 
 import { Animations } from '@models/animations';
-import { DestinationResult, SwapEvent } from '@models/types';
-import { DestinationType } from '@models/enums';
+import { DestinationResult, SwapEvent, SwapTrigger } from '@models/types';
 import { SearchService } from '@app/modules/search/services/search/search.service';
 import { SubscribingComponent } from '@app/modules/shared/components/subscribing/subscribing.component';
 
@@ -52,8 +51,8 @@ export class ResultsComponent extends SubscribingComponent implements OnInit, On
     this._searchService.clearResults();
   }
 
-  triggerSwap(category: DestinationType, idx: number) {
-    this._searchService.swap(category, idx);
+  triggerSwap(swapTrigger: SwapTrigger) {
+    this._searchService.swap(swapTrigger);
   }
 
 }

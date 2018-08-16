@@ -10,9 +10,8 @@ import { first } from 'rxjs/operators';
 import { environment } from '@env/environment';
 import {
   DestinationResult,
-  SearchQuery, SwapEvent
+  SearchQuery, SwapEvent, SwapTrigger
 } from '@models/types';
-import { DestinationType } from '@models/enums';
 
 @Injectable({
   providedIn: 'root'
@@ -70,14 +69,14 @@ export class SearchService {
       () => this._isSearchPending.next(false));
   }
 
-  swap(category: DestinationType, index: number): void {
+  swap(swapTrigger: SwapTrigger): void {
     const lastQuery: SearchQuery = Object.assign({}, this._latestQuery);
-    lastQuery.category = category;
+    lastQuery.category = swapTrigger.category;
     lastQuery.otherDestIDs = SearchService.getIDs(this._latestSearchResults.value); // get the names from latest query names
     this._http.post(`${environment.apiEndpoint}/api/swap`, lastQuery)
       .pipe(first())
       .subscribe((destination: DestinationResult) => {
-        this._latestSwap.next({ result: destination, index: index});
+        this._latestSwap.next({ result: destination, index: swapTrigger.index});
       },
         err => {
           this._latestSearchError.next('Failed swap!');

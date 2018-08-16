@@ -30,10 +30,8 @@ describe('HomeComponent', () => {
 
   const searchServiceMock: Partial<SearchService> = {
     clearResults: () => {},
-    // swap: (category: DestinationType, index: number) => {},
     latestSearchError$: from('Error!'),
     isSearchPending$: of(true)
-    // latestSwap$: of({ result: destinationResults[1], index: 1 })
   };
 
   beforeEach(async(() => {

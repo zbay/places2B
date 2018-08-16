@@ -1,0 +1,39 @@
+.result-box{
+  min-width: 200px;
+  .restaurant-data{
+    box-sizing: border-box;
+    color:black;
+    background-color: white;
+    border: 2px solid black;
+    padding: 5px;
+  }
+
+  .destImg {
+    max-height: 400px;
+    max-width: 80%;
+    border: 0.3em groove white;
+    border-radius: 0.2em;
+    margin: 0.3em auto 1em;
+  }
+
+  .restaurant-data, .destImg {
+    margin: 10px !important;
+    flex: 1;
+  }
+}
+
+.title{
+  font-size:2em;
+  text-decoration:underline;
+}
+
+@media(max-width: 500px) {
+  .title {
+    font-size: 1.4em;
+  }
+}
+@media(max-width: 300px) {
+  .title {
+    font-size: 1.2em;
+  }
+}

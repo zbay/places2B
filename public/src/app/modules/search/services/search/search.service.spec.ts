@@ -19,7 +19,7 @@ describe('SearchService', () => {
   };
   const destinationResults: { results: DestinationResult[] } = { results: [{
       id: '1',
-      category: 'restaurants',
+      category: DestinationType.Restaurants,
       image_url: 'https://www.image.com/img.jpg',
       loc: 'Loc',
       name: 'Name',
@@ -30,7 +30,7 @@ describe('SearchService', () => {
     },
       {
         id: '2',
-        category: 'nightlife',
+        category: DestinationType.Nightlife,
         image_url: 'https://www.image.com/img2.jpg',
         loc: 'Location',
         name: 'Name 2',
@@ -41,7 +41,7 @@ describe('SearchService', () => {
       }]};
   const swappedResult: DestinationResult = {
     id: '2',
-    category: 'nightlife',
+    category: DestinationType.Nightlife,
     image_url: 'https://www.image.com/img3.jpg',
     loc: 'Location 2',
     name: 'Name 3',
@@ -139,7 +139,7 @@ describe('SearchService', () => {
         lastQuery.category = DestinationType.Nightlife;
         lastQuery.otherDestIDs = SearchService.getIDs(service._latestSearchResults.value);
 
-        service.swap(DestinationType.Nightlife, SWAP_INDEX);
+        service.swap({category: DestinationType.Nightlife, index: SWAP_INDEX});
 
         const req = httpMock.expectOne(swapUrl);
         expect(req.request.method).toEqual('POST');

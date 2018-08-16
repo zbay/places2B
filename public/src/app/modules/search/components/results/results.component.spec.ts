@@ -8,7 +8,8 @@ import { ResultsComponent } from './results.component';
 import { MaterialModule } from '@app/modules/material/material.module';
 import { SearchService } from '@app/modules/search/services/search/search.service';
 import { DestinationType } from '@models/enums';
-import { DestinationResult } from '@models/types';
+import { DestinationResult, SwapTrigger } from '@models/types';
+import { ResultComponent } from '@app/modules/search/components/result/result.component';
 
 describe('ResultsComponent', () => {
   let component: ResultsComponent;
@@ -19,7 +20,7 @@ describe('ResultsComponent', () => {
 
   const destinationResults: DestinationResult[] = [{
       id: '1',
-      category: 'restaurants',
+      category: DestinationType.Restaurants,
       image_url: 'https://www.image.com/img.jpg',
       loc: 'Loc',
       name: 'Name',
@@ -30,7 +31,7 @@ describe('ResultsComponent', () => {
     },
     {
       id: '2',
-      category: 'nightlife',
+      category: DestinationType.Nightlife,
       image_url: 'https://www.image.com/img2.jpg',
       loc: 'Location',
       name: 'Name 2',
@@ -42,14 +43,14 @@ describe('ResultsComponent', () => {
 
   const searchServiceMock: Partial<SearchService> = {
     clearResults: () => {},
-    swap: (category: DestinationType, index: number) => {},
+    swap: (swapTrigger: SwapTrigger) => {},
     latestSearchResults$: of(destinationResults),
     latestSwap$: of({ result: destinationResults[1], index: 1 })
   };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ResultsComponent ],
+      declarations: [ ResultComponent, ResultsComponent ],
       imports: [ MaterialModule, NoopAnimationsModule ],
       providers: [ { provide: SearchService, useValue: searchServiceMock } ]
     })
@@ -72,7 +73,7 @@ describe('ResultsComponent', () => {
 
   describe('triggerSwap', () => {
     it('should trigger swap', () => {
-      component.triggerSwap(DestinationType.Nightlife, 1);
+      component.triggerSwap({category: DestinationType.Nightlife, index: 1});
       expect(swapSpy).toHaveBeenCalled();
     });
   });

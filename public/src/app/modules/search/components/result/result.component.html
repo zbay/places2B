@@ -1,0 +1,20 @@
+<div class="result-box">
+  <div [@scaleVertFadeSwap]="destination.swapStatus || 'showing'">
+    <div class="restaurant-data">
+      <a href="{{destination.url}}" class="title">{{destination.name || "No result! Try again?"}}</a>
+      <br />
+      {{destination.loc || "N/A"}}
+      <br />
+      {{destination.phone}}
+      <br />
+      <span *ngFor="let star of destination.rating">&#9733;</span>
+      <br />
+      {{destination.reviews}}
+      <br />
+      {{destination.price}}
+      <br />
+      <button (click)="swap()" class="p2b-form-button">Somewhere else?</button>
+    </div>
+    <img class="destImg" src="{{destination.image_url}}" />
+  </div>
+</div>

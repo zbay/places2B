@@ -1,6 +1,8 @@
+import { DestinationType } from '@models/enums';
+
 export interface DestinationResult {
-  id: string,
-  category: string;
+  id: string;
+  category: DestinationType;
   image_url: string;
   loc: string;
   name: string;
