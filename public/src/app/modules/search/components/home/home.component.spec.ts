@@ -1,33 +1,58 @@
-// import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-//
-// import { HomeComponent } from './home.component';
-// import { MaterialModule } from '@app/modules/material/material.module';
-// import { SearchService } from '@app/modules/search/services/search/search.service';
-// import { MatDialog } from '@angular/material';
-// import { SearchModule } from '@app/modules/search/search.module';
-// import { ResultsComponent } from '@app/modules/search/components/results/results.component';
-// import { SearchComponent } from '@app/modules/search/components/search/search.component';
-//
-// describe('HomeComponent', () => {
-//   let component: HomeComponent;
-//   let fixture: ComponentFixture<HomeComponent>;
-//
-//   beforeEach(async(() => {
-//     TestBed.configureTestingModule({
-//       declarations: [ HomeComponent ],
-//       imports: [ MaterialModule, ResultsComponent, SearchComponent ],
-//       providers: [ MatDialog, SearchService ]
-//     })
-//     .compileComponents();
-//   }));
-//
-//   beforeEach(() => {
-//     fixture = TestBed.createComponent(HomeComponent);
-//     component = fixture.componentInstance;
-//     fixture.detectChanges();
-//   });
-//
-//   it('should create', () => {
-//     expect(component).toBeTruthy();
-//   });
-// });
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+
+import 'hammerjs';
+
+import { HomeComponent } from './home.component';
+import { SharedModule } from '@app/modules/shared/shared.module';
+import { SearchService } from '@app/modules/search/services/search/search.service';
+import { Component } from '@angular/core';
+import { from, of } from 'rxjs';
+
+@Component({
+  selector: 'app-results',
+  template: '<p>Mock Results Component</p>'
+})
+class MockResultsComponent {}
+
+@Component({
+  selector: 'app-search',
+  template: '<p>Mock Search Component</p>'
+})
+class MockSearchComponent {}
+
+
+describe('HomeComponent', () => {
+  let component: HomeComponent;
+  let fixture: ComponentFixture<HomeComponent>;
+  // let searchService;
+
+  const searchServiceMock: Partial<SearchService> = {
+    clearResults: () => {},
+    // swap: (category: DestinationType, index: number) => {},
+    latestSearchError$: from('Error!'),
+    isSearchPending$: of(true)
+    // latestSwap$: of({ result: destinationResults[1], index: 1 })
+  };
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [ HomeComponent, MockResultsComponent, MockSearchComponent ],
+      imports: [ SharedModule, NoopAnimationsModule ],
+      providers: [ MatDialog,
+        { provide: SearchService, useValue: searchServiceMock } ]
+    })
+    .compileComponents();
+  }));
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(HomeComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

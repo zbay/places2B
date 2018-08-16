@@ -4,7 +4,6 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { of } from 'rxjs';
 
-
 import { ResultsComponent } from './results.component';
 import { MaterialModule } from '@app/modules/material/material.module';
 import { SearchService } from '@app/modules/search/services/search/search.service';
@@ -41,7 +40,7 @@ describe('ResultsComponent', () => {
       reviews: '1244'
     }];
 
-  const searchServiceStub: Partial<SearchService> = {
+  const searchServiceMock: Partial<SearchService> = {
     clearResults: () => {},
     swap: (category: DestinationType, index: number) => {},
     latestSearchResults$: of(destinationResults),
@@ -52,7 +51,7 @@ describe('ResultsComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ ResultsComponent ],
       imports: [ MaterialModule, NoopAnimationsModule ],
-      providers: [ {provide: SearchService, useValue: searchServiceStub } ]
+      providers: [ { provide: SearchService, useValue: searchServiceMock } ]
     })
     .compileComponents();
   }));
@@ -75,6 +74,17 @@ describe('ResultsComponent', () => {
     it('should trigger swap', () => {
       component.triggerSwap(DestinationType.Nightlife, 1);
       expect(swapSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('slowSwap', () => {
+    it('should swap values', () => {
+      component.searchResults = destinationResults;
+      expect(component.searchResults[0]).toEqual(destinationResults[0]);
+      ResultsComponent.slowSwap(destinationResults[0], destinationResults[1]);
+      setTimeout(() => {
+        expect(component.searchResults[0]).toEqual(destinationResults[1]);
+      }, 1000);
     });
   });
 });
