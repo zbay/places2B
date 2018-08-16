@@ -41,7 +41,7 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
   hasSubmitted = false;
   isSearchOpen = true;
 
-  private static toPriceString(min: number, max: number): string {
+  static toPriceString(min: number, max: number): string {
     let priceString = '';
     for (let i = min; i <= max; i++) {
       priceString += i;
@@ -123,7 +123,7 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
       destinations: this.destinations.controls
         .map((dest: AbstractControl) => ({kind: '' + dest.value}))
     };
-    console.log(searchQuery);
+    // console.log(searchQuery);
     this._searchService.search(searchQuery);
     this.isSearchOpen = false;
     this.hasSubmitted = true;
