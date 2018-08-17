@@ -54,7 +54,7 @@ selectRandomResultsForCategory: function (randomConfig) {
                 randomDestinations[i] = module.exports.getEmptyDestination();
             }
             if (module.exports.truthyLength(randomDestinations) >= destinations.length) {
-                return res.json({randomDestinations});
+                return res.json(randomDestinations);
             }
         }
     }

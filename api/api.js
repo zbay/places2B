@@ -18,7 +18,6 @@ module.exports = function Routes(app) {
 
     app.post("/api/search", async function process(req, res) { // process search requests
         console.log('searching');
-        console.log([process.env]);
         const requestData = req.body;
         const destinations = requestData.destinations;
 
