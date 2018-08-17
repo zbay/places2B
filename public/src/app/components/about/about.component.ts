@@ -1,7 +1,7 @@
 import { Component,
          OnInit } from '@angular/core';
 
-import { Animations } from '@models/animations';
+import { Animations } from '../../models/animations';
 
 @Component({
   animations: [Animations.fadeIn],

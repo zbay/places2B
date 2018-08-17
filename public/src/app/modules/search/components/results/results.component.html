@@ -1,7 +1,8 @@
 <div *ngIf="searchResults.length">
   <h3>Here's a plan!</h3>
   <ol id="resultsList">
-    <li [@scaleHorizAndFadeIn] *ngFor="let destination of searchResults; let idx = index">
+    <li [@scaleHorizAndFadeIn]
+        *ngFor="let destination of searchResults; let idx = index">
       <app-result [destination]="destination"
                   [index]="idx"
                   (swapped)="triggerSwap($event)">

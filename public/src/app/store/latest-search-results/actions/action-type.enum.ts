@@ -1,0 +1,6 @@
+export enum ActionType {
+  FULL_UPDATE = 'FULL_UPDATE',
+  REORDER_SWAP = 'REORDER_SWAP',
+  NEW_ITEM_SWAP = 'NEW_ITEM_SWAP',
+  CLEAR = 'CLEAR'
+}

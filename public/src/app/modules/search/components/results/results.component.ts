@@ -1,10 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 
+import { Store, select } from '@ngrx/store';
+
 import { Animations } from '@models/animations';
-import { DestinationResult, SwapEvent, SwapTrigger } from '@models/types';
+import { DestinationResult, SwapTrigger } from '@models/types';
 import { SearchService } from '@app/modules/search/services/search/search.service';
 import { SubscribingComponent } from '@app/modules/shared/components/subscribing/subscribing.component';
+import { AppState } from '@app/store/app-state';
 
 @Component({
   animations: [Animations.fadeIn, Animations.scaleHorizAndFadeIn, Animations.scaleVertFadeSwap],
@@ -13,9 +16,11 @@ import { SubscribingComponent } from '@app/modules/shared/components/subscribing
   styleUrls: ['./results.component.scss']
 })
 export class ResultsComponent extends SubscribingComponent implements OnInit, OnDestroy {
+  hasLoaded = false;
   searchResults: DestinationResult[] = [];
 
-  constructor(private _searchService: SearchService) {
+  constructor(private _searchService: SearchService,
+              private _store: Store<AppState>) {
     super();
   }
 
@@ -32,19 +37,28 @@ export class ResultsComponent extends SubscribingComponent implements OnInit, On
   }
 
   ngOnInit() {
-
-    this._searchService.latestSearchResults$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(results => {
+    this._store.pipe(
+      select('latestSearchResults'),
+      takeUntil(this.destroy$)
+    ).subscribe((results: DestinationResult[]) => {
+      // On load: set whole array. On re-search or swap: slow swap for smoother transition
+      if (!this.hasLoaded) {
         this.searchResults = results;
-      });
-
-    this._searchService.latestSwap$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((swapEvent: SwapEvent) => {
-        ResultsComponent.slowSwap(this.searchResults[swapEvent.index], swapEvent.result);
-      });
-
+      } else {
+        if (results.length < this.searchResults.length) {
+          this.searchResults = results.slice(0, results.length);
+        }
+        for (let i = 0; i < this.searchResults.length; i++) {
+          if (this.searchResults[i].id !== results[i].id) {
+            ResultsComponent.slowSwap(this.searchResults[i], results[i]);
+          }
+        }
+        for (let i = this.searchResults.length; i < results.length; i++) {
+          this.searchResults.push(results[i]);
+        }
+      }
+      this.hasLoaded = !!this.searchResults.length;
+    });
   }
 
   ngOnDestroy() {
