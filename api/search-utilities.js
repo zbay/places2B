@@ -54,7 +54,7 @@ selectRandomResultsForCategory: function (randomConfig) {
                 randomDestinations[i] = module.exports.getEmptyDestination();
             }
             if (module.exports.truthyLength(randomDestinations) >= destinations.length) {
-                res.json({results: randomDestinations});
+                return res.json({randomDestinations});
             }
         }
     }
@@ -62,7 +62,7 @@ selectRandomResultsForCategory: function (randomConfig) {
     selectOneRandomResult: function (results, otherDestIDs, res) {
         const idSet = new Set(otherDestIDs);
         if(!results.length) {
-            res.json(module.exports.getEmptyDestination());
+            return res.json(module.exports.getEmptyDestination());
         } else {
             let randomDest;
             for (let i = 0; i < maxRandomTries; i++) {
@@ -74,7 +74,7 @@ selectRandomResultsForCategory: function (randomConfig) {
             if(!randomDest) {
                 randomDest = module.exports.getEmptyDestination();
             }
-            res.json(randomDest);
+            return res.json(randomDest);
         }
 },
 

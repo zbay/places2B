@@ -56,7 +56,7 @@ export class SearchService {
     this._isSearchPending.next(true);
     this._http.post(`${environment.apiEndpoint}/api/search`, SearchService.queryWithDestinationTypes(query))
       .pipe(first())
-      .subscribe((data: any) => {
+      .subscribe((data: { results: DestinationResult[] }) => {
         this._latestQuery = query;
         if (data.results) {
           this._latestSearchResults.next(data.results);
@@ -68,6 +68,16 @@ export class SearchService {
       },
       () => this._isSearchPending.next(false));
   }
+  // search(query: SearchQuery): Observable<DestinationResult[]> {
+  //   this._isSearchPending.next(true);
+  //   return this._http.post(`${environment.apiEndpoint}/api/search`, SearchService.queryWithDestinationTypes(query))
+  //     .pipe(first(),
+  //       tap((results: DestinationResult[] ) => {
+  //           this._latestQuery = query;
+  //           this._latestSearchResults.next(results);
+  //         }
+  //       ));
+  // }
 
   swap(swapTrigger: SwapTrigger): void {
     const lastQuery: SearchQuery = Object.assign({}, this._latestQuery);

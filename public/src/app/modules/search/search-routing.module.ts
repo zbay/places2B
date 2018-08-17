@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { HomeComponent } from './components/home/home.component';
+// import { ResultsComponent } from '@app/modules/search/components/results/results.component';
 
 const routes: Routes = [
   {path: 'search', component: HomeComponent}
@@ -12,10 +13,10 @@ const routes: Routes = [
 //     children: [
 //       { path: 'results', children: [
 //           {
-//             path: '', component: ResultsComponent
+//             path: '', pathMatch: 'full', component: ResultsComponent
 //           },
 //           {
-//             path: 'map', loadChildren: '@app/modules/map/map.module#MapModule'
+//             path: 'map', pathMatch: 'full', loadChildren: '@app/modules/map/map.module#MapModule'
 //           }
 //         ]
 //       }

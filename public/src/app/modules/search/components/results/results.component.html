@@ -1,13 +1,26 @@
 <div *ngIf="searchResults.length">
   <h3>Here's a plan!</h3>
-  <ol id="resultsList">
-    <li [@scaleHorizAndFadeIn] *ngFor="let destination of searchResults; let idx = index">
-      <app-result [destination]="destination"
-                  [index]="idx"
-                  (swapped)="triggerSwap($event)">
-      </app-result>
-    </li>
-  </ol>
+  <mat-chip-list fxLayout="row" fxLayoutAlign="center center">
+    <mat-chip (click)="this.changeDisplayType(DisplayType.LIST)"
+              [class.selected-chip]="displayType===DisplayType.LIST">
+      List
+    </mat-chip>
+    <mat-chip (click)="this.changeDisplayType(DisplayType.MAP)"
+              [class.selected-chip]="displayType===DisplayType.MAP">
+      Map
+    </mat-chip>
+  </mat-chip-list>
+  <app-map *ngIf="displayType === DisplayType.MAP"></app-map>
+  <div *ngIf="displayType === DisplayType.LIST">
+    <ol id="resultsList">
+      <li [@scaleHorizAndFadeIn] *ngFor="let destination of searchResults; let idx = index">
+        <app-result [destination]="destination"
+                    [index]="idx"
+                    (swapped)="triggerSwap($event)">
+        </app-result>
+      </li>
+    </ol>
+  </div>
   <div id="disclaimer">
       <p>Make sure to check the hours or schedule before visiting any of these fine places!</p>
   </div>

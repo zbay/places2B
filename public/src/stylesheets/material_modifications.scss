@@ -1,5 +1,12 @@
 @import '../p2b-theme';
 
+.selected-chip {
+  color: $link-primary !important;
+}
+mat-chip-list {
+  margin-bottom: 1em;
+}
+
 mat-step {
   border: 1px solid white !important;
 }
