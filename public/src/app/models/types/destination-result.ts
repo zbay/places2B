@@ -10,6 +10,7 @@ export interface DestinationResult {
   phone: string;
   rating: string[];
   reviews: string;
+  coordinates: { latitude: number, longitude: number };
 
   // UI-only property to facilitate swapping animation
   swapStatus?: string;

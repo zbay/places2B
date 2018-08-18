@@ -10,7 +10,7 @@
       Map
     </mat-chip>
   </mat-chip-list>
-  <app-map *ngIf="displayType === DisplayType.MAP"></app-map>
+  <app-map *ngIf="displayType === DisplayType.MAP" [searchResults]="searchResults"></app-map>
   <div *ngIf="displayType === DisplayType.LIST">
     <ol id="resultsList">
       <li [@scaleHorizAndFadeIn] *ngFor="let destination of searchResults; let idx = index">
