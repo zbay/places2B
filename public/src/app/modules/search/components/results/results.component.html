@@ -1,4 +1,4 @@
-<div *ngIf="searchResults.length" [@scaleHorizAndFadeIn]>
+<div *ngIf="searchResults.length">
   <h3>Here's a plan!</h3>
   <mat-chip-list fxLayout="row" fxLayoutAlign="center center">
     <mat-chip (click)="this.changeDisplayType(DisplayType.LIST)"
@@ -10,10 +10,11 @@
       Map
     </mat-chip>
   </mat-chip-list>
+  <div [@scaleHorizAndFadeIn]>
     <div *ngIf="mapStatus !== 'hidden'">
       <app-map [searchResults]="searchResults"></app-map>
     </div>
-    <div *ngIf="mapStatus === 'hidden'">
+    <div *ngIf="mapStatus === 'hidden'" >
       <ol id="resultsList">
         <li *ngFor="let destination of searchResults; let idx = index">
           <app-result [destination]="destination"
@@ -23,6 +24,7 @@
         </li>
       </ol>
     </div>
+  </div>
   <div id="disclaimer">
       <p>Make sure to check the hours or schedule before visiting any of these fine places!</p>
   </div>

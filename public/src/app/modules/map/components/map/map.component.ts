@@ -60,7 +60,7 @@ export class MapComponent implements OnInit, OnChanges {
     this.layers = this.searchResults.map((result) => {
       return marker([result.coordinates.latitude, result.coordinates.longitude],
         {title: result.name, icon: MapComponent.getIcon(result.category) })
-        .bindPopup(`<strong>${result.name}<br />${result.loc}</strong>`);
+        .bindPopup(`<strong>${result.name}</strong><br />${result.loc}`);
     });
   }
 

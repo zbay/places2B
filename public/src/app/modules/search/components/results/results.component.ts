@@ -23,6 +23,7 @@ enum DisplayType {
 export class ResultsComponent extends SubscribingComponent implements OnInit, OnDestroy {
   // displayType: DisplayType = DisplayType.LIST;
   DisplayType = DisplayType;
+  hasLoaded = false;
   searchResults: DestinationResult[] = [];
   mapStatus = 'hidden';
 
@@ -46,7 +47,23 @@ export class ResultsComponent extends SubscribingComponent implements OnInit, On
     this._searchService.latestSearchResults$
       .pipe(takeUntil(this.destroy$))
       .subscribe(results => {
-        this.searchResults = results;
+        // this.searchResults = results;
+        if (!this.hasLoaded) {
+          this.searchResults = results;
+        } else {
+          if (results.length < this.searchResults.length) {
+            this.searchResults = results.slice(0, results.length);
+          }
+          for (let i = 0; i < this.searchResults.length; i++) {
+            if (this.searchResults[i].id !== results[i].id) {
+              ResultsComponent.slowSwap(this.searchResults[i], results[i]);
+            }
+          }
+          for (let i = this.searchResults.length; i < results.length; i++) {
+            this.searchResults.push(results[i]);
+          }
+        }
+        this.hasLoaded = !!this.searchResults.length;
       });
 
     this._searchService.latestSwap$

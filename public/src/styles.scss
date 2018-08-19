@@ -86,7 +86,8 @@ a:active {
   );
 }
 
-.hexbin-hexagon {
-  stroke: #000;
-  stroke-width: .5px;
+.thick-border {
+  border: 0.75em solid $bookend-border;
+  box-sizing: border-box;
+  border-radius: 0.75em;
 }
