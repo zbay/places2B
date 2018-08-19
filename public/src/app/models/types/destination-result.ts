@@ -11,6 +11,7 @@ export interface DestinationResult {
   rating: string[];
   reviews: string;
   coordinates: { latitude: number, longitude: number };
+  url: string;
 
   // UI-only property to facilitate swapping animation
   swapStatus?: string;
