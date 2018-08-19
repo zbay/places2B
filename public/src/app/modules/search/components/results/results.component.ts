@@ -13,15 +13,18 @@ enum DisplayType {
 }
 
 @Component({
-  animations: [Animations.fadeIn, Animations.scaleHorizAndFadeIn, Animations.scaleVertFadeSwap],
+  animations: [Animations.fadeIn,
+    Animations.scaleHorizAndFadeIn,
+    Animations.scaleVertFadeSwap],
   selector: 'app-results',
   templateUrl: './results.component.html',
   styleUrls: ['./results.component.scss']
 })
 export class ResultsComponent extends SubscribingComponent implements OnInit, OnDestroy {
-  displayType: DisplayType = DisplayType.LIST;
+  // displayType: DisplayType = DisplayType.LIST;
   DisplayType = DisplayType;
   searchResults: DestinationResult[] = [];
+  mapStatus = 'hidden';
 
   constructor(private _searchService: SearchService) {
     super();
@@ -58,7 +61,8 @@ export class ResultsComponent extends SubscribingComponent implements OnInit, On
   }
 
   changeDisplayType(displayType: DisplayType) {
-    this.displayType = displayType;
+    // this.displayType = displayType;
+    this.mapStatus = displayType === DisplayType.MAP ? 'showing' : 'hidden';
   }
 
   triggerSwap(swapTrigger: SwapTrigger) {

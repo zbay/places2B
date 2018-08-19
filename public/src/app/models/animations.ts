@@ -25,7 +25,7 @@ export const Animations = {
         transform: 'scaleX(0)',
         opacity: 0
       }),
-      animate('300ms 300ms', style({
+      animate('300ms', style({
         transform: 'scaleX(1)',
         opacity: 1
       }))
@@ -35,7 +35,7 @@ export const Animations = {
         transform: 'scaleX(1)',
         opacity: 1
       }),
-      animate(300, style({
+      animate('300ms', style({
         transform: 'scaleX(0)',
         opacity: 0
       }))
