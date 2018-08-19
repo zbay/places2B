@@ -1,15 +1,17 @@
 <div *ngIf="searchResults.length">
   <h3>Here's a plan!</h3>
-  <mat-chip-list fxLayout="row" fxLayoutAlign="center center">
-    <mat-chip (click)="this.changeDisplayType(DisplayType.LIST)"
-              [class.selected-chip]="mapStatus === 'hidden'">
-      List
-    </mat-chip>
-    <mat-chip (click)="this.changeDisplayType(DisplayType.MAP)"
-              [class.selected-chip]="mapStatus === 'showing'">
-      Map
-    </mat-chip>
-  </mat-chip-list>
+    <mat-chip-list fxLayout="row"
+                   fxLayoutAlign="center center"
+                   class="sticky-bar mat-elevation-z6">
+      <mat-chip (click)="this.changeDisplayType(DisplayType.LIST)"
+                [class.selected-chip]="mapStatus === 'hidden'">
+        List
+      </mat-chip>
+      <mat-chip (click)="this.changeDisplayType(DisplayType.MAP)"
+                [class.selected-chip]="mapStatus === 'showing'">
+        Map
+      </mat-chip>
+    </mat-chip-list>
   <div [@scaleHorizAndFadeIn]>
     <div *ngIf="mapStatus !== 'hidden'">
       <app-map [searchResults]="searchResults"></app-map>

@@ -4,15 +4,7 @@
 
 // icons? music_video, local_dining, local_bar, local_cafe, local_movies, fastfood, terrain, directions_bike
 
-body {
-  margin-top: 0;
-  margin-bottom: 0;
-  font-family: Lemon, 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color:$primary;
-  font-size: 16px;
+@mixin pattern-background {
   background:
     linear-gradient(27deg, #151515 5px, transparent 5px) 0 5px,
     linear-gradient(207deg, #151515 5px, transparent 5px) 10px 0,
@@ -22,6 +14,23 @@ body {
     linear-gradient(#1d1d1d 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424);
   background-color: $background;
   background-size: 20px 20px;
+}
+
+@mixin thick-border {
+  border: 0.75em solid $bookend-border;
+  box-sizing: border-box;
+  border-radius: 0.75em;
+}
+
+body {
+  @include pattern-background;
+  margin: 0;
+  font-family: Lemon, 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color:$primary;
+  font-size: 16px;
 }
 input, button{
   font-family: 'Avenir', Arial, sans-serif;
@@ -72,9 +81,7 @@ a:active {
 }
 
 .result-box {
-  border: 0.75em solid $bookend-border;
-  box-sizing: border-box;
-  border-radius: 0.75em;
+  @include thick-border;
   margin: 0.5em;
   /* lightgray from 0 to 10px, white from 10 to 20px */
   background: repeating-linear-gradient(
@@ -87,7 +94,21 @@ a:active {
 }
 
 .thick-border {
-  border: 0.75em solid $bookend-border;
-  box-sizing: border-box;
-  border-radius: 0.75em;
+  @include thick-border;
+}
+
+.sticky-bar {
+  @include pattern-background;
+  position: sticky !important;
+  top: 0;
+  z-index: 1000;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid white;
+  border-bottom: 2px solid white;
+}
+
+
+.leaflet-popup {
+  z-index: 10000 !important; // to be above the +/-
 }
