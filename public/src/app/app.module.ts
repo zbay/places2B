@@ -3,6 +3,8 @@ import { GestureConfig } from '@angular/material';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+
 import { AppRoutingModule } from '@app/app-routing.module';
 import { AppComponent } from '@app/app.component';
 import { AboutComponent } from '@app/about/about.component';
@@ -18,6 +20,7 @@ import { SearchModule } from '@app/modules/search/search.module';
     BrowserAnimationsModule,
     BrowserModule,
     HttpClientModule,
+    LeafletModule.forRoot(),
     SearchModule,
     AppRoutingModule
   ],

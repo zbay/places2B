@@ -9,6 +9,7 @@ import { ResultsComponent } from './components/results/results.component';
 import { SearchService } from '@app/modules/search/services/search/search.service';
 import { ErrorDialogComponent } from '@app/modules/shared/components/error-dialog/error-dialog/error-dialog.component';
 import { ResultComponent } from './components/result/result.component';
+import { MapModule } from '@app/modules/map/map.module';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { ResultComponent } from './components/result/result.component';
     ResultComponent
   ],
   imports: [
+    MapModule,
     SearchRoutingModule,
     SharedModule,
     HttpClientModule

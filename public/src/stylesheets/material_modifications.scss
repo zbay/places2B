@@ -1,5 +1,12 @@
 @import '../p2b-theme';
 
+.selected-chip {
+  color: $link-primary !important;
+}
+mat-chip-list {
+  margin-bottom: 1em;
+}
+
 mat-step {
   border: 1px solid white !important;
 }
@@ -24,6 +31,8 @@ mat-icon{
 
 mat-expansion-panel {
   background: rgba(0,0,0, 0.6) !important;
+  margin-left: 5px !important;
+  margin-right: 5px !important;
 }
 
 .mat-expansion-panel-content {

@@ -56,10 +56,11 @@ export class SearchService {
     this._isSearchPending.next(true);
     this._http.post(`${environment.apiEndpoint}/api/search`, SearchService.queryWithDestinationTypes(query))
       .pipe(first())
-      .subscribe((data: any) => {
+      .subscribe((results: DestinationResult[]) => {
+        console.log(results);
         this._latestQuery = query;
-        if (data.results) {
-          this._latestSearchResults.next(data.results);
+        if (results) {
+          this._latestSearchResults.next(results);
         }
       },
       err => {

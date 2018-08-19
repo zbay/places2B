@@ -16,5 +16,6 @@
     "redis": "^2.8.0",
     "throttled-queue": "^1.0.5",
     "yelp-fusion": "^2.0.3"
-  }
+  },
+  "devDependencies": {}
 }

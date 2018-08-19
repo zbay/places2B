@@ -1,12 +1,13 @@
 import { Component,
          OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material';
+import { Router } from '@angular/router';
 
 import { takeUntil } from 'rxjs/operators';
 
+import { ErrorDialogComponent } from '@app/modules/shared/components/error-dialog/error-dialog/error-dialog.component';
 import { SearchService } from '@app/modules/search/services/search/search.service';
 import { SubscribingComponent } from '@app/modules/shared/components/subscribing/subscribing.component';
-import { ErrorDialogComponent } from '@app/modules/shared/components/error-dialog/error-dialog/error-dialog.component';
 
 @Component({
   animations: [],
@@ -18,6 +19,7 @@ export class HomeComponent extends SubscribingComponent implements OnInit {
   isLoading = false;
 
   constructor(private _dialog: MatDialog,
+    private _router: Router,
     private _searchService: SearchService) {
     super();
   }
@@ -28,6 +30,16 @@ export class HomeComponent extends SubscribingComponent implements OnInit {
       .subscribe((changedLoadingStatus: boolean) => {
         this.isLoading = changedLoadingStatus;
       });
+
+    // this._searchService.latestSearchResults$
+    //   .pipe(takeUntil(this.destroy$), distinctUntilChanged())
+    //   .subscribe((results) => {
+    //     if (results && results.length) {
+    //       this._router.navigate(['/search/results']);
+    //     } else {
+    //       this._router.navigate(['/search']);
+    //     }
+    //   });
 
     this._searchService.latestSearchError$
       .pipe(takeUntil(this.destroy$))

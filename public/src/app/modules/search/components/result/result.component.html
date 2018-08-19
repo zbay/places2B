@@ -1,7 +1,9 @@
 <div class="result-box">
   <div [@scaleVertFadeSwap]="destination.swapStatus || 'showing'">
     <div class="restaurant-data">
-      <a href="{{destination.url}}" class="title">{{destination.name || "No result! Try again?"}}</a>
+      <a href="{{destination.url}}"
+         target="_blank"
+         class="title">{{destination.name || "No result! Try again?"}}</a>
       <br />
       {{destination.loc || "N/A"}}
       <br />
