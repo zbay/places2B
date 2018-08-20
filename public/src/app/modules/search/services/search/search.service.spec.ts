@@ -17,38 +17,53 @@ describe('SearchService', () => {
     price: '1,2,3',
     destinations: [{ kind: 'restaurants' }, { kind: 'nightlife' }]
   };
-  const destinationResults: { results: DestinationResult[] } = { results: [{
-      id: '1',
-      category: DestinationType.Restaurants,
-      image_url: 'https://www.image.com/img.jpg',
-      loc: 'Loc',
-      name: 'Name',
-      price: '$',
-      phone: '1234567890',
-      rating: ['*'],
-      reviews: '1243'
+  const destinationResults: DestinationResult[] = [{
+    id: '1',
+    category: DestinationType.Restaurants,
+    image_url: 'https://www.image.com/img.jpg',
+    loc: 'Loc',
+    name: 'Name',
+    price: '$',
+    phone: '1234567890',
+    rating: ['*'],
+    reviews: '1243',
+    coordinates: {
+      latitude: 1.0,
+      longitude: 2.0
     },
-      {
-        id: '2',
-        category: DestinationType.Nightlife,
-        image_url: 'https://www.image.com/img2.jpg',
-        loc: 'Location',
-        name: 'Name 2',
-        price: '$$',
-        phone: '1234567891',
-        rating: ['*', '*'],
-        reviews: '1244'
-      }]};
+    url: 'https://www.abc.com'
+  },
+    {
+      id: '2',
+      category: DestinationType.Nightlife,
+      image_url: 'https://www.image.com/img2.jpg',
+      loc: 'Location',
+      name: 'Name 2',
+      price: '$$',
+      phone: '1234567891',
+      rating: ['*', '*'],
+      reviews: '1244',
+      coordinates: {
+        latitude: 1.1,
+        longitude: 2.1
+      },
+      url: 'https://www.abc.com/'
+    }];
   const swappedResult: DestinationResult = {
     id: '2',
     category: DestinationType.Nightlife,
-    image_url: 'https://www.image.com/img3.jpg',
-    loc: 'Location 2',
-    name: 'Name 3',
-    price: '$$$',
-    phone: '1234567892',
-    rating: ['*', '*', '*'],
-    reviews: '1245'
+    image_url: 'https://www.image.com/img2.jpg',
+    loc: 'Location',
+    name: 'Name 2',
+    price: '$$',
+    phone: '1234567891',
+    rating: ['*', '*'],
+    reviews: '1244',
+    coordinates: {
+      latitude: 1.1,
+      longitude: 2.1
+    },
+    url: 'https://www.abc.com/'
   };
 
   beforeEach(() => {
@@ -69,7 +84,7 @@ describe('SearchService', () => {
 
   describe('queryWithDestinationTypes', () => {
     it('should extract distinct destination types', inject([SearchService], (service: SearchService) => {
-      const results = destinationResults.results;
+      const results = destinationResults;
       expect(SearchService.queryWithDestinationTypes(searchQuery).queryTypes)
         .toEqual([DestinationType.Restaurants, DestinationType.Nightlife]);
     }));
@@ -77,7 +92,7 @@ describe('SearchService', () => {
 
   describe('getIDs', () => {
     it('should extract IDs', inject([SearchService], (service: SearchService) => {
-      const results = destinationResults.results;
+      const results = destinationResults;
       expect(SearchService.getIDs(results)).toEqual([results[0].id, results[1].id]);
     }));
   });
@@ -91,7 +106,7 @@ describe('SearchService', () => {
             skip(1)
           )
           .subscribe((queries) => {
-            expect(queries).toEqual(destinationResults.results);
+            expect(queries).toEqual(destinationResults);
             done();
           });
 
@@ -134,7 +149,7 @@ describe('SearchService', () => {
           });
 
         service._latestQuery = searchQuery;
-        service._latestSearchResults.next(destinationResults.results);
+        service._latestSearchResults.next(destinationResults);
         const lastQuery: SearchQuery = Object.assign({}, service._latestQuery);
         lastQuery.category = DestinationType.Nightlife;
         lastQuery.otherDestIDs = SearchService.getIDs(service._latestSearchResults.value);

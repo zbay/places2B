@@ -17,7 +17,7 @@
   }
 
   .restaurant-data, .destImg {
-    margin: 10px !important;
+    margin: 10px;
     flex: 1;
   }
 }
@@ -34,6 +34,6 @@
 }
 @media(max-width: 300px) {
   .title {
-    font-size: 1.2em;
+    font-size: 1em;
   }
 }

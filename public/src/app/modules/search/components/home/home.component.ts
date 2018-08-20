@@ -19,7 +19,6 @@ export class HomeComponent extends SubscribingComponent implements OnInit {
   isLoading = false;
 
   constructor(private _dialog: MatDialog,
-    private _router: Router,
     private _searchService: SearchService) {
     super();
   }
@@ -30,16 +29,6 @@ export class HomeComponent extends SubscribingComponent implements OnInit {
       .subscribe((changedLoadingStatus: boolean) => {
         this.isLoading = changedLoadingStatus;
       });
-
-    // this._searchService.latestSearchResults$
-    //   .pipe(takeUntil(this.destroy$), distinctUntilChanged())
-    //   .subscribe((results) => {
-    //     if (results && results.length) {
-    //       this._router.navigate(['/search/results']);
-    //     } else {
-    //       this._router.navigate(['/search']);
-    //     }
-    //   });
 
     this._searchService.latestSearchError$
       .pipe(takeUntil(this.destroy$))

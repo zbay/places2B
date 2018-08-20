@@ -22,15 +22,20 @@ describe('ResultComponent', () => {
     component = fixture.componentInstance;
     component.index = 1;
     component.destination = {
-      id: '1',
-        category: DestinationType.Restaurants,
-        image_url: 'https://www.image.com/img.jpg',
-        loc: 'Loc',
-        name: 'Name',
-        price: '$',
-        phone: '1234567890',
-        rating: ['*'],
-        reviews: '1243'
+      id: '2',
+      category: DestinationType.Nightlife,
+      image_url: 'https://www.image.com/img2.jpg',
+      loc: 'Location',
+      name: 'Name 2',
+      price: '$$',
+      phone: '1234567891',
+      rating: ['*', '*'],
+      reviews: '1244',
+      coordinates: {
+        latitude: 1.1,
+        longitude: 2.1
+      },
+      url: 'https://www.abc.com/'
     };
     fixture.detectChanges();
   });

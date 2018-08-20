@@ -10,6 +10,7 @@ import { SearchService } from '@app/modules/search/services/search/search.servic
 import { DestinationType } from '@models/enums';
 import { DestinationResult, SwapTrigger } from '@models/types';
 import { ResultComponent } from '@app/modules/search/components/result/result.component';
+import { MapModule } from '@app/modules/map/map.module';
 
 describe('ResultsComponent', () => {
   let component: ResultsComponent;
@@ -27,7 +28,12 @@ describe('ResultsComponent', () => {
       price: '$',
       phone: '1234567890',
       rating: ['*'],
-      reviews: '1243'
+      reviews: '1243',
+      coordinates: {
+        latitude: 1.0,
+        longitude: 2.0
+      },
+      url: 'https://www.abc.com'
     },
     {
       id: '2',
@@ -38,7 +44,12 @@ describe('ResultsComponent', () => {
       price: '$$',
       phone: '1234567891',
       rating: ['*', '*'],
-      reviews: '1244'
+      reviews: '1244',
+      coordinates: {
+        latitude: 1.1,
+        longitude: 2.1
+      },
+      url: 'https://www.abc.com/'
     }];
 
   const searchServiceMock: Partial<SearchService> = {
@@ -51,7 +62,7 @@ describe('ResultsComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ ResultComponent, ResultsComponent ],
-      imports: [ MaterialModule, NoopAnimationsModule ],
+      imports: [ MapModule, MaterialModule, NoopAnimationsModule ],
       providers: [ { provide: SearchService, useValue: searchServiceMock } ]
     })
     .compileComponents();
