@@ -75,6 +75,12 @@ npm install pm2 -g
         }
     }
 
+
+curl -O http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+sudo yum install epel-release-latest-7.noarch.rpm
+sudo yum install certbot
+sudo certbot certonly
+
 server {
   listen       80 default_server;
   listen       [::]:80 default_server;

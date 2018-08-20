@@ -99,16 +99,11 @@ a:active {
 
 .sticky-bar {
   @include pattern-background;
-  position: sticky !important;
+  position: sticky;
   top: 0;
   z-index: 1000;
   padding-top: 0.5em;
   padding-bottom: 0.5em;
-  border-top: 2px solid white;
-  border-bottom: 2px solid white;
-}
-
-
-.leaflet-popup {
-  z-index: 10000 !important; // to be above the +/-
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
 }
