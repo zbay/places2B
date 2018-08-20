@@ -52,7 +52,6 @@ module.exports = {
                     category: category,
                     price: result.price || '',
                     distance: result.distance || 0,
-                    // the next two are unused but may be useful later
                     coordinates: result.coordinates,
                     categories: result.categories
                 };

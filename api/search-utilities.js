@@ -14,14 +14,18 @@ module.exports = {
  getEmptyDestination: function () {
     return {
         name: "No result! Try again?",
-        loc: "N/A",
+        loc: "",
         image_url: "./assets/question-mark.jpg",
         url: "",
         phone: "",
         rating: [],
-        reviews: "Reviews: 0",
+        reviews: "",
         category: 'none',
-        price: ''
+        price: "",
+        coordinates: {
+            latitude: null,
+            longitude: null
+        }
     };
 },
 

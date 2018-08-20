@@ -5,10 +5,10 @@ import { AboutComponent } from '@app/about/about.component';
 import { NotFoundComponent } from '@app/modules/shared/components/not-found/not-found.component';
 
 const routes: Routes = [
-  {path: '', redirectTo: 'search', pathMatch: 'full'},
-  {path: 'about', pathMatch: 'full', component: AboutComponent},
-  {path: '**', component: NotFoundComponent}
-  // {path: 'search', loadChildren: '@app/modules/search/search.module#SearchModule'}
+  { path: '', redirectTo: 'search', pathMatch: 'full' },
+  { path: 'about', pathMatch: 'full', component: AboutComponent },
+  { path: 'business', pathMatch: 'full', loadChildren: '@app/modules/business/business.module#BusinessModule' },
+  { path: '**', component: NotFoundComponent }
 ];
 
 @NgModule({

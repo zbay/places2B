@@ -26,7 +26,16 @@ const emptyIcon = new MarkerIcon({iconUrl: '../../assets/map_marker-red.png'});
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit, OnChanges {
-  @Input() searchResults: DestinationResult[] = [];
+
+  // custom getter/setters are to filter out results without coordinates
+  _searchResults: DestinationResult[];
+  get searchResults() {
+    return this._searchResults;
+  }
+  @Input('searchResults')
+  set searchResults (results: DestinationResult[]) {
+    this._searchResults = results.filter((result) => result.coordinates.longitude || result.coordinates.latitude);
+  }
 
   fitBounds: LatLngBounds;
   layers = [];
@@ -57,11 +66,12 @@ export class MapComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     this.setMapBounds();
-    this.layers = this.searchResults.map((result) => {
-      return marker([result.coordinates.latitude, result.coordinates.longitude],
-        {title: result.name, icon: MapComponent.getIcon(result.category) })
-        .bindPopup(`<strong>${result.name}</strong><br />${result.loc}`);
-    });
+    this.layers = this.searchResults
+      .map((result) => {
+        return marker([result.coordinates.latitude, result.coordinates.longitude],
+          {title: result.name, icon: MapComponent.getIcon(result.category) })
+          .bindPopup(`<strong>${result.name}</strong><br />${result.loc}`);
+      });
   }
 
   setMapBounds(): void {

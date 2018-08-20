@@ -3,18 +3,17 @@
     <div class="restaurant-data">
       <a href="{{destination.url}}"
          target="_blank"
-         class="title">{{destination.name || "No result! Try again?"}}</a>
-      <br />
-      {{destination.loc || "N/A"}}
-      <br />
-      {{destination.phone}}
-      <br />
-      <span *ngFor="let star of destination.rating">&#9733;</span>
-      <br />
-      {{destination.reviews}}
-      <br />
-      {{destination.price}}
-      <br />
+         class="title">{{destination.name || "No result! Try again?"}}
+      </a>
+      <div *ngIf="destination.loc">
+        {{destination.loc}}
+      </div>
+      <div *ngIf="destination.phone">{{destination.phone}}</div>
+      <div *ngIf="destination.rating">
+        <span *ngFor="let star of destination.rating">&#9733;</span>
+      </div>
+      <div *ngIf="destination.reviews">{{destination.reviews}}</div>
+      <div *ngIf="destination.price">{{destination.price}}</div>
       <button (click)="swap()" class="p2b-form-button">Somewhere else?</button>
     </div>
     <img class="destImg" src="{{destination.image_url}}" />
