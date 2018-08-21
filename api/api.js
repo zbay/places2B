@@ -30,7 +30,7 @@ module.exports = function Routes(app) {
         requestData.queryTypes.map(async (queryCategory) => {
             const cacheKey = utilities.getCacheKey({
                 category: queryCategory,
-                city: requestData.city,
+                city: requestData.city + requestData.country,
                 price: requestData.price,
                 radius: radius,
             });
@@ -41,7 +41,7 @@ module.exports = function Routes(app) {
                     utilities.selectRandomResultsForCategory(randomConfig);
                 } else {
                     yelpThrottle(async () => {
-                        const yelpQueryConfig = {location: requestData.city, radius: radius, categories: queryCategory, price: requestData.price};
+                        const yelpQueryConfig = {location: requestData.city + ', ' + requestData.country, radius: radius, categories: queryCategory, price: requestData.price};
                         await yelpQuery(yelpQueryConfig).then(async (response) => {
                             await redisHelper.saveResultsToRedis(cacheKey, queryCategory, response.jsonBody.businesses).then((businesses) => {
                                 const randomConfig = {results: businesses, randomDestinations, randomDestinationsSet, destinations, category: queryCategory, res};
@@ -72,7 +72,7 @@ module.exports = function Routes(app) {
             return res.json(utilities.getEmptyDestination());
         } else {
             const cacheKey = utilities.getCacheKey({
-                city: requestData.city,
+                city: requestData.city + requestData.country,
                 radius: radius,
                 category: requestData.category
             });
@@ -81,7 +81,7 @@ module.exports = function Routes(app) {
                     utilities.selectOneRandomResult(results, requestData.otherDestIDs, res);
                 } else {
                     yelpThrottle(async () => {
-                        const yelpQueryConfig = {location: requestData.city, radius: radius, categories: requestData.category, price: requestData.price};
+                        const yelpQueryConfig = {location: requestData.city + ', ' + requestData.country, radius: radius, categories: requestData.category, price: requestData.price};
                         await yelpQuery(yelpQueryConfig).then(async (response) => {
                             await redisHelper.saveResultsToRedis(cacheKey, requestData.category, response.jsonBody.businesses).then((businesses) => {
                                 utilities.selectOneRandomResult(businesses, requestData.otherDestIDs, res);

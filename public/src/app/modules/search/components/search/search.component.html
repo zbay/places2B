@@ -19,6 +19,14 @@
                  formControlName="city"/>
           <mat-error>City is required</mat-error>
         </mat-form-field>
+        <mat-form-field>
+          <mat-select placeholder="Country" formControlName="country" [compareWith]="compareCountries">
+            <mat-option *ngFor="let nation of countries" [value]="nation" class="p2b-solid-background">
+              {{nation.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error>Country is required</mat-error>
+        </mat-form-field>
         <br />
         <mat-form-field>
           <input matInput

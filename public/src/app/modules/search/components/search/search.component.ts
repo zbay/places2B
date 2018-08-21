@@ -14,6 +14,8 @@ import { SearchQuery } from '@models/types';
 import { SearchRadiusValidator } from '@app/modules/search/validators/search-radius/search-radius-validator';
 import { SearchService } from '@app/modules/search/services/search/search.service';
 import { SubscribingComponent } from '@app/modules/shared/components/subscribing/subscribing.component';
+import { Countries } from '@models/arrays/countries';
+import { Country } from '@models/types/country';
 
 @Component({
   animations: [Animations.fadeIn],
@@ -22,6 +24,7 @@ import { SubscribingComponent } from '@app/modules/shared/components/subscribing
   styleUrls: ['./search.component.scss']
 })
 export class SearchComponent extends SubscribingComponent implements OnInit {
+  countries = Countries;
   DestinationType = DestinationType;
   destinationTypes = DestinationTypes;
   fb = new FormBuilder();
@@ -32,6 +35,7 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
   });
   locationGroup: FormGroup = this.fb.group({
     city: ['Alexandria, VA', Validators.required],
+    country: [{code: 'US', name: 'United States'}, Validators.required],
     radius: [25, [Validators.required, SearchRadiusValidator]]});
   destinationsGroup: FormGroup = this.fb.group({
     destinations: this.fb.array([
@@ -114,8 +118,10 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
   }
 
   triggerSearch() {
+    console.log(this.locationGroup.value);
     const searchQuery: SearchQuery = {
       city: '' + this.locationGroup.get('city').value,
+      country: '' + this.locationGroup.get('country').value.code,
       radius: parseInt(this.locationGroup.get('radius').value, 10),
       price: this.optionsGroup.get('filterByPrice').value ?
         SearchComponent.toPriceString(this.optionsGroup.get('minPrice').value, this.optionsGroup.get('maxPrice').value)
@@ -127,6 +133,10 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
     this._searchService.search(searchQuery);
     this.isSearchOpen = false;
     this.hasSubmitted = true;
+  }
+
+  private compareCountries(c1: Country, c2: Country) {
+    return c1 && c2 && c1.code === c2.code;
   }
 
 }

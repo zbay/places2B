@@ -2,6 +2,7 @@ import { DestinationType } from '@models/enums/destination-type.enum';
 
 export interface SearchQuery {
   city: string;
+  country: string;
   destinations: { kind: string }[];
   radius: number;
   price: string;

@@ -30,7 +30,7 @@ module.exports = {
 },
 
 getCacheKey: function (queryData) {
-    return queryData.city.toUpperCase() + queryData.category + module.exports.bucketizeRadius(queryData.radius) + queryData.price;
+    return queryData.city.toUpperCase() + queryData.country + queryData.category + module.exports.bucketizeRadius(queryData.radius) + queryData.price;
 },
 
 bucketizeRadius: function (num) {
