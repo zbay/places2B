@@ -135,7 +135,6 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
     this.hasSubmitted = true;
   }
 
-  // used in the HTML
   public compareCountries(c1: Country, c2: Country) {
     return c1 && c2 && c1.code === c2.code;
   }

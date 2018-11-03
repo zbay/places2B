@@ -47,7 +47,8 @@
       <div [formGroup]="destinationsGroup" class="step-content">
         <div formArrayName="destinations" >
           <div fxLayout="row wrap" fxLayoutAlign="space-around center">
-            <mat-form-field *ngFor="let destination of destinations.controls; let i = index">
+            <mat-form-field *ngFor="let destination of destinations.controls; let i = index"
+              class="activity-field">
               <mat-select [formControlName]="i"
                           class="inline-select"
                           value="destination"
@@ -55,7 +56,7 @@
                 <mat-option *ngFor="let destinationType of destinationTypes"
                             class="p2b-solid-background"
                             [value]="destinationType.key">
-                  {{destinationType.description}}
+                  {{ destinationType.description }}
                 </mat-option>
               </mat-select>
               <mat-error>Blank destinations are not allowed!</mat-error>
