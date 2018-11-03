@@ -8,14 +8,14 @@ import { Component,
 import { takeUntil } from 'rxjs/operators';
 
 import { Animations } from '@models/animations';
+import { Countries } from '@models/arrays/countries';
+import { Country } from '@models/types/country';
 import { DestinationType } from '@models/enums';
 import { DestinationTypes } from '@models/arrays/destination-types';
 import { SearchQuery } from '@models/types';
 import { SearchRadiusValidator } from '@app/modules/search/validators/search-radius/search-radius-validator';
 import { SearchService } from '@app/modules/search/services/search/search.service';
 import { SubscribingComponent } from '@app/modules/shared/components/subscribing/subscribing.component';
-import { Countries } from '@models/arrays/countries';
-import { Country } from '@models/types/country';
 
 @Component({
   animations: [Animations.fadeIn],
@@ -118,7 +118,7 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
   }
 
   triggerSearch() {
-    console.log(this.locationGroup.value);
+    // console.log(this.locationGroup.value);
     const searchQuery: SearchQuery = {
       city: '' + this.locationGroup.get('city').value,
       country: '' + this.locationGroup.get('country').value.code,
@@ -135,7 +135,8 @@ export class SearchComponent extends SubscribingComponent implements OnInit {
     this.hasSubmitted = true;
   }
 
-  private compareCountries(c1: Country, c2: Country) {
+  // used in the HTML
+  public compareCountries(c1: Country, c2: Country) {
     return c1 && c2 && c1.code === c2.code;
   }
 
