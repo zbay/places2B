@@ -5,7 +5,7 @@ const secondsPerWeek = 60 * 60 * 24 * 70;
 const maxAllowableDistance = 40000; // filter out faraway businesses that include the search area in their service area
 
 module.exports = {
-    retrieveFromRedis: async (cacheKey) => {
+    retrieveFromRedis: (cacheKey) => {
         console.log('retrieving from redis');
         return new Promise((resolve, reject) => redisClient.hgetall(cacheKey, function (err, obj) {
             if (err) {

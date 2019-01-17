@@ -2,10 +2,6 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const path = require('path');
-/* const pg = require('pg');
-const connectionString = process.env.POSTGRES_URL;
-const client = new pg.Client(connectionString);
-client.connect(); */
 
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, './public/dist')));
